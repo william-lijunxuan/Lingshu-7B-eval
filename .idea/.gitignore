@@ -1,0 +1,30 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+# Editor-based HTTP Client requests
+/httpRequests/
+# Datasource local storage ignored files
+/dataSources/
+/dataSources.local.xml
+/qwenvl/train/output/**
+/qwenvl/scripts/output/**
+/qwenvl/scripts/outputqwen3vl/**
+/qwenvl/scripts/wandb/**
+/qwenvl/train/wandb/**
+/.idea/**
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pytest_cache/
+*.egg-info/
+.cache/
+/qwenvl/eval/log/**
+/qwenvl/eval/eval_results/**
+/misc.xml
+/inspectionProfiles/profiles_settings.xml
+/inspectionProfiles/Project_Default.xml
+/modules.xml
+/vcs.xml
+/Lingshu-7B-eval.iml
+/qwenvl/eval/output/**
