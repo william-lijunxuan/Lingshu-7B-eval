@@ -20,7 +20,7 @@ class Derm1m(BaseDataset):
         self.chunk_idx = int(os.environ.get("chunk_idx",0))
         self.num_chunks = int(os.environ.get("num_chunks",1))
         self.eval_local_datasets_flag = bool(strtobool(os.environ.get("eval_local_datasets_flag",True)))
-        self.eval_local_datasets_file = str(os.environ.get("eval_local_datasets_file", "/home/william/dataset/skin/Derm1M/Derm1M_train.jsonl"))
+        self.eval_local_datasets_file = str(os.environ.get("eval_local_datasets_file", "/mnt/d/skinalor/dataset/skin/Derm1M/Derm1M_train.jsonl"))
 
 
     def load_data(self):
@@ -50,7 +50,7 @@ class Derm1m(BaseDataset):
         Example output (for a smooth red papule on the lip):
         “The red, smooth, dome-shaped papule on the lip, with slight keratosis and prominent capillaries, is most consistent with basal cell carcinoma; a skin biopsy is advised for confirmation.”"""
 
-        primary_img_path = os.path.join("/home/william/dataset/skin/Derm1M", sample["image"])
+        primary_img_path = os.path.join("/mnt/d/skinalor/dataset/skin/Derm1M", sample["image"])
         image = Image.open(primary_img_path).convert("RGB")
         messages = {"prompt": prompt_text, "image": image}
         sample["messages"] = messages

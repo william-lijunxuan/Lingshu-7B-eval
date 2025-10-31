@@ -6,7 +6,7 @@ today_str  = datetime.now().strftime("%Y%m%d_%H%M%S")
 
 # DATASET_NAME ="MMSkinQA_SkinCAP"
 # RAG_FLAG="False"
-# PROJECT_ROOT = "/home/william/model/Skinalor/RAG/RAGDataSet"
+# PROJECT_ROOT = "/mnt/d/skinalor/model/Skinalor/RAG/RAGDataSet"
 # DB_DIR = os.path.join(PROJECT_ROOT, DATASET_NAME)
 # CHROMA_PERSIST_PATH = os.path.join(DB_DIR, "chroma_db_skin")
 # CHROMA_COLLECTION_NAME = r"skin_cases_multivector_"+DATASET_NAME
@@ -16,7 +16,7 @@ today_str  = datetime.now().strftime("%Y%m%d_%H%M%S")
 RAG_FLAG="True"
 # DATASET_NAME ="MMSkinQA"
 DATASET_NAME ="MMSkinQA_SKINgpt"
-PROJECT_ROOT = "/home/william/model/Skinalor/RAG/RAGDataSet"
+PROJECT_ROOT = "/mnt/d/skinalor/model/Skinalor/RAG/RAGDataSet"
 DB_DIR = os.path.join(PROJECT_ROOT, DATASET_NAME)
 CHROMA_PERSIST_PATH = os.path.join(DB_DIR, "chroma_db_skin")
 CHROMA_COLLECTION_NAME = r"skin_cases_multivector_"+DATASET_NAME
@@ -25,7 +25,7 @@ CHROMA_COLLECTION_NAME = r"skin_cases_multivector_"+DATASET_NAME
 # RAG config --SkinCAP
 # RAG_FLAG="True"
 # DATASET_NAME ="SkinCAP"
-# PROJECT_ROOT = "/home/william/model/Skinalor/RAG/RAGDataSet"
+# PROJECT_ROOT = "/mnt/d/skinalor/model/Skinalor/RAG/RAGDataSet"
 # DB_DIR = os.path.join(PROJECT_ROOT, DATASET_NAME)
 # CHROMA_PERSIST_PATH = os.path.join(DB_DIR, "chroma_db_skin")
 # CHROMA_COLLECTION_NAME = "skin_cases_multivector"+DATASET_NAME
@@ -42,17 +42,17 @@ EVAL_DATASETS = "SkinCAP"
 
 
 EVAL_LOCAL_DATASETS_FLAG ="True"
-# EVAL_LOCAL_DATASETS_FILE ="/home/william/dataset/skin/SKINgpt/20250711055029_SKINgpt_multiple_choice_QA.json"
-# EVAL_LOCAL_DATASETS_FILE ="/home/william/dataset/skin/SKINgpt/20250717055029_SKINgpt_close_end_QA.json"
-# EVAL_LOCAL_DATASETS_FILE ="/home/william/dataset/skin/SkinCAP/SkinCAP_20250717_201435_multiple_choice_QA.json"
-EVAL_LOCAL_DATASETS_FILE ="/home/william/dataset/skin/SkinCAP/SkinCAP_20250712_121252_close_end_QA.json"
+# EVAL_LOCAL_DATASETS_FILE ="/mnt/d/skinalor/dataset/skin/SKINgpt/20250711055029_SKINgpt_multiple_choice_QA.json"
+# EVAL_LOCAL_DATASETS_FILE ="/mnt/d/skinalor/dataset/skin/SKINgpt/20250717055029_SKINgpt_close_end_QA.json"
+# EVAL_LOCAL_DATASETS_FILE ="/mnt/d/skinalor/dataset/skin/SkinCAP/SkinCAP_20250717_201435_multiple_choice_QA.json"
+EVAL_LOCAL_DATASETS_FILE ="/mnt/d/skinalor/dataset/skin/SkinCAP/SkinCAP_20250712_121252_close_end_QA.json"
 
 
-EVAL_DATASET_PATH = "/home/william/dataset/skin/SKINgpt"
+EVAL_DATASET_PATH = "/mnt/d/skinalor/dataset/skin/SKINgpt"
 OUTPUT_PATH = f"eval_results/MedVLM-R1/{today_str}"
 # OUTPUT_PATH= "eval_result/medgemma-4b-it"
 # VLM model path
-MODEL_PATH = "/home/william/model/MedVLM-R1"
+MODEL_PATH = "/mnt/d/skinalor/model/MedVLM-R1"
 MODEL_NAME="MedVLM-R1"
 
 
