@@ -186,7 +186,7 @@ try:
 
     for idx, eval_dataset in enumerate(tqdm(args.eval_datasets), start=0):
         set_seed(args.seed)
-        print(f'evaluating on {eval_dataset}...')
+        print(f'1.evaluating on {eval_dataset}...')
 
         eval_dataset_path = os.path.join(args.datasets_path, eval_dataset) if args.datasets_path != "hf" else None
         if bool(strtobool(config.RAG_FLAG)):
@@ -197,8 +197,11 @@ try:
         os.makedirs(eval_output_path, exist_ok=True)
         from benchmark import prepare_benchmark
 
+        print(f'2.prepare data start...')
         benchmark = prepare_benchmark(idx, model, eval_dataset, eval_dataset_path, eval_output_path)
+        print(f'3.load data start...')
         benchmark.load_data()
+        print(f'4.load data end...')
         final_results = benchmark.eval() if benchmark else {}
         print(f'final results on {eval_dataset}: {final_results}')
         if final_results is not None:

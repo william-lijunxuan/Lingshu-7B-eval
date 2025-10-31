@@ -3,7 +3,7 @@ today_str=$(date +%Y%m%d_%H%M%S)
 echo $today_str
 
 source ~/miniforge3/etc/profile.d/conda.sh
-conda activate jupyter_env
+conda activate lingshu
 
 # dataset and RAG config
 DATASET_NAME="MMSkinQA_SKINgpt"
@@ -35,8 +35,8 @@ ADAPTER_PATH="/mnt/d/skinalor/model/Lingshu-7B-Finetuning/qwenvl/scripts/output"
 
 
 # vllm settings
-CUDA_VISIBLE_DEVICES="0"
-TENSOR_PARALLEL_SIZE="1"
+CUDA_VISIBLE_DEVICES="0,1"
+TENSOR_PARALLEL_SIZE="2"
 USE_VLLM="True"
 
 # evaluation settings
