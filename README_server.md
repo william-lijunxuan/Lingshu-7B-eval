@@ -7,11 +7,13 @@ cd /mnt/d/skinalor/model
 git clone https://github.com/william-lijunxuan/Lingshu-7B-eval.git
 git checkout server
 git pull  
+cd Lingshu-7B-eval
 ```
 # run 
 ## eval finetuning
 
 ```bash
+conda activate lingshu
 cd qwenvl/eval
 bash shell/Lingshu/lingshu_7b.sh
 ```
