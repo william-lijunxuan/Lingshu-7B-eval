@@ -9,15 +9,18 @@ git checkout server
 git pull  
 ```
 # run 
-## eval baseline
-```bash
-conda activate lingshu
-cd qwenvl/eval
-bash shell/Lingshu/lingshu_7b.sh
-```
 ## eval finetuning
 
 ```bash
+cd qwenvl/eval
+bash shell/Lingshu/lingshu_7b.sh
+```
+
+
+## eval baseline
+Change the ADAPTER_PATH in shell/Lingshu/lingshu_7b.sh to None
+```bash
+conda activate lingshu
 cd qwenvl/eval
 bash shell/Lingshu/lingshu_7b.sh
 ```
