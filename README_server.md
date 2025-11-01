@@ -26,3 +26,9 @@ conda activate lingshu
 cd qwenvl/eval
 bash shell/Lingshu/lingshu_7b.sh
 ```
+# Run lingshu-7b locally using gradio
+```bash
+conda activate lingshu
+cd qwenvl/eval/gradio/lingshu-7b
+python multi_image_conversation.py
+```
