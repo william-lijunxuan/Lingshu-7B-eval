@@ -30,7 +30,8 @@ MODEL_PATH="/home/william/model/Lingshu-7B"
 MODEL_NAME="LingShu"
 CONFIG_MODEL_NAME="Lingshu"
 #ADAPTER_PATH="/home/william/model/Lingshu-7B-Finetuning/qwenvl/scripts/output"
-ADAPTER_PATH="/home/william/model/Lingshu-7B-eval/qwenvl/eval/output"
+#ADAPTER_PATH="/home/william/model/Lingshu-7B-eval/qwenvl/eval/output"
+ADAPTER_PATH=None
 
 # vllm settings
 CUDA_VISIBLE_DEVICES="0"

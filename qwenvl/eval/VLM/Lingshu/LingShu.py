@@ -15,7 +15,8 @@ class LingShu:
         self.repetition_penalty = args.repetition_penalty
         self.max_new_tokens = args.max_new_tokens
         self.adapter_path = getattr(args, "adapter_path", None)
-        if self.adapter_path is not None:
+        print(f"adapter_path:{self.adapter_path}")
+        if self.adapter_path is not None and not (isinstance(self.adapter_path, str) and self.adapter_path.strip().lower() in {"none", "null", ""}):
             from peft import PeftModel
             self.llm = PeftModel.from_pretrained(self.llm, self.adapter_path)
             print("----------------------Use fine-tuned weights---------------------------")
