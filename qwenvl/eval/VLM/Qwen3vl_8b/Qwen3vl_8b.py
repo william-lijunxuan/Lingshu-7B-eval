@@ -1,12 +1,12 @@
 from qwen_vl_utils import process_vision_info
-from transformers import Qwen2_5_VLForConditionalGeneration, AutoTokenizer, AutoProcessor,Qwen2_5_VLProcessor
+from transformers import Qwen3VLForConditionalGeneration, AutoTokenizer, AutoProcessor
 import torch,gc
 import time
 
-class LingShu:
+class Qwen3vl_8b:
     def __init__(self, model_path, args):
         super().__init__()
-        self.llm = Qwen2_5_VLForConditionalGeneration.from_pretrained(
+        self.llm = Qwen3VLForConditionalGeneration.from_pretrained(
             model_path,torch_dtype=torch.bfloat16, device_map="auto", attn_implementation="flash_attention_2")
         self.processor = AutoProcessor.from_pretrained(model_path,use_fast=True)
         # self.processor.save_pretrained(model_path)

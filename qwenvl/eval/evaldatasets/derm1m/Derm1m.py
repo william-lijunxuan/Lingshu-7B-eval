@@ -50,12 +50,18 @@ class Derm1m(BaseDataset):
         Example output (for a smooth red papule on the lip):
         “The red, smooth, dome-shaped papule on the lip, with slight keratosis and prominent capillaries, is most consistent with basal cell carcinoma; a skin biopsy is advised for confirmation.”"""
 
+        # prompt_text ="""Write a description of the following skin lesion image, and your description should include the following information if they are clearly discernible from the image.
+        #                 1. region: The potential area of the body where the lesion or wound has been examined.
+        #                 2. general skin texture and hair growth.
+        #                 3. lesions: size (if scale is available in the image), shape, definition, color, texture.
+        #                 4. elevation: Description of the lesion or wound relative to the skin surface of the patient.
+        #                 5. skin texture surrounding the lesion (e.g. coarse/thickness/atrophic/erythema/bleeding, etc)\n<image>"""
         primary_img_path = os.path.join("/mnt/d/skinalor/dataset/skin/Derm1M", sample["image"])
         image = Image.open(primary_img_path).convert("RGB")
         messages = {"prompt": prompt_text, "image": image}
         sample["messages"] = messages
         del sample["image"]
-
+        sample["image_path"] = primary_img_path
         return sample
 
 
@@ -77,6 +83,8 @@ class Derm1m(BaseDataset):
                 "rouge1": 0,
                 "rouge2": 0,
                 "rougel": 0,
+                "Meteor" : 0,
+                # "BertScore" : 0,
                 "precision": 0,
                 "recall": 0,
                 "f1": 0,
