@@ -27,7 +27,11 @@ class LingShu:
     def __new__(cls, model_path: str, args: Any) -> Any:
         from .Lingshu.LingShu import LingShu
         return LingShu(model_path, args)
-
+@VLMRegistry.register("Qwen3vl_8b")
+class LingShu:
+    def __new__(cls, model_path: str, args: Any) -> Any:
+        from .Qwen3vl_8b.Qwen3vl_8b import Qwen3vl_8b
+        return Qwen3vl_8b(model_path, args)
 @VLMRegistry.register("MedGemma")
 class MedGemma:
     def __new__(cls, model_path: str, args: Any) -> Any:

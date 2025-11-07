@@ -36,10 +36,10 @@ EVAL_LOCAL_DATASETS_FILE ="/home/william/dataset/skin/Derm1M/Derm1M_train.jsonl"
 # EVAL_LOCAL_DATASETS_FILE ="/home/william/dataset/skin/Derm1M/Derm1M_train_qwen_prompt.jsonl"
 
 EVAL_DATASET_PATH = "/home/william/dataset/skin/Derm1M"
-OUTPUT_PATH = f"eval_results/Lingshu-7B/{today_str}"
+OUTPUT_PATH = f"eval_results/Qwen3-VL-8B-Thinking/{today_str}"
 # VLM model path
-MODEL_PATH = "/home/william/model/Lingshu-7B"
-MODEL_NAME="LingShu"
+MODEL_PATH = "/home/william/model/Qwen3-VL-8B-Thinking"
+MODEL_NAME="Qwen3vl_8b"
 # ADAPTER_PATH = "/home/william/model/Lingshu-7B-Finetuning/qwenvl/scripts/output"
 ADAPTER_PATH = None
 
