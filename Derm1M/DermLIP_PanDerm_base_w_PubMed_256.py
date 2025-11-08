@@ -6,9 +6,9 @@ import torch
 model, _, preprocess = open_clip.create_model_and_transforms(
     'hf-hub:redlessone/DermLIP_PanDerm-base-w-PubMed-256'
 )
-# DEFAULT_IMAGE = "/home/william/dataset/skin/SkinCAP/skincap/55.png"
-# DEFAULT_IMAGE = "/home/william/dataset/skin/Derm1M/IIYI/7_3.png" # amyloidosis
-DEFAULT_IMAGE = "/home/william/dataset/skin/Derm1M/twitter/151_0.png" # herpes simplex virus
+# DEFAULT_IMAGE = "/mnt/d/skinalor/dataset/skin/SkinCAP/skincap/55.png"
+# DEFAULT_IMAGE = "/mnt/d/skinalor/dataset/skin/Derm1M/IIYI/7_3.png" # amyloidosis
+DEFAULT_IMAGE = "/mnt/d/skinalor/dataset/skin/Derm1M/twitter/151_0.png" # herpes simplex virus
 model.eval()
 
 # Initialize tokenizer

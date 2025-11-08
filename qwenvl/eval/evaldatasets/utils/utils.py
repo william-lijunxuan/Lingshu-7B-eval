@@ -46,7 +46,7 @@ SCIBERT_URL_DICT = {
 
 model2layers = {
     "bert-base-uncased": 9,  # 0.6925188074454226
-    "/home/william/model/bert-base-uncased": 9,  # 0.6925188074454226
+    "/mnt/d/skinalor/model/bert-base-uncased": 9,  # 0.6925188074454226
     "bert-large-uncased": 18,  # 0.7210358126642836
     "bert-base-cased-finetuned-mrpc": 9,  # 0.6721947475618048
     "bert-base-multilingual-cased": 9,  # 0.6680687802637132
@@ -215,7 +215,7 @@ def calculate_meteor(predictions, ground_truths):
 
 # # BERTScore
 def calculate_bertscore(predictions, ground_truths):
-    model_path = '/home/william/model/bert-base-uncased'
+    model_path = '/mnt/d/skinalor/model/bert-base-uncased'
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     from .Bertscore import BERTScorer
     scorer = BERTScorer(model_type=model_path, device=device, lang='en')
