@@ -110,7 +110,7 @@ class Derm1m(BaseDataset):
             '''
         )
 
-        primary_img_path = os.path.join("/home/william/dataset/skin/Derm1M", sample["image"])
+        primary_img_path = os.path.join("/mnt/d/skinalor/dataset/skin/Derm1M", sample["image"])
         image = Image.open(primary_img_path).convert("RGB")
         messages = {"prompt": prompt_text, "image": image}
         sample["messages"] = messages
