@@ -43,18 +43,73 @@ class Derm1m(BaseDataset):
             return self.samples
 
     def construct_multi_image_rag_prompt(self,sample):
-        prompt_text = """You are a board‐certified dermatology AI specialist. A patient has just uploaded an image of a skin lesion. Carefully examine the lesion’s visual features—color, shape, borders, surface texture, and anatomic location—and then compose a single, fully descriptive diagnostic sentence in English. Mirror the expert style by:
-        1. Opening with a concise description of the key visual finding (e.g. “The red, smooth, exophytic nodule with a slightly narrowed base…”).
-        2. Stating the most likely diagnosis (e.g. “…may indicate squamous cell carcinoma.”).
-        3. Optionally noting any next steps for confirmation (e.g. “Further biopsy is recommended to confirm the diagnosis.”).
-        Example output (for a smooth red papule on the lip):
-        “The red, smooth, dome-shaped papule on the lip, with slight keratosis and prominent capillaries, is most consistent with basal cell carcinoma; a skin biopsy is advised for confirmation.”"""
+        # prompt_text = """You are a board‐certified dermatology AI specialist. A patient has just uploaded an image of a skin lesion. Carefully examine the lesion’s visual features—color, shape, borders, surface texture, and anatomic location—and then compose a single, fully descriptive diagnostic sentence in English. Mirror the expert style by:
+        # 1. Opening with a concise description of the key visual finding (e.g. “The red, smooth, exophytic nodule with a slightly narrowed base…”).
+        # 2. Stating the most likely diagnosis (e.g. “…may indicate squamous cell carcinoma.”).
+        # 3. Optionally noting any next steps for confirmation (e.g. “Further biopsy is recommended to confirm the diagnosis.”).
+        # Example output (for a smooth red papule on the lip):
+        # “The red, smooth, dome-shaped papule on the lip, with slight keratosis and prominent capillaries, is most consistent with basal cell carcinoma; a skin biopsy is advised for confirmation.”"""
         # prompt_text ="""Write a description of the following skin lesion image, and your description should include the following information if they are clearly discernible from the image.
         #                 1. region: The potential area of the body where the lesion or wound has been examined.
         #                 2. general skin texture and hair growth.
         #                 3. lesions: size (if scale is available in the image), shape, definition, color, texture.
         #                 4. elevation: Description of the lesion or wound relative to the skin surface of the patient.
         #                 5. skin texture surrounding the lesion (e.g. coarse/thickness/atrophic/erythema/bleeding, etc)\n<image>"""
+        description = None
+        for conv in sample["conversations"]:
+            if conv["from"] == "gpt":
+                description = conv["value"]
+                break
+        prompt_text = (
+                '''
+            **Instruction (system)**
+            You are a dermatology vision–language assistant. Given one clinical or dermoscopic image and optional user text, infer the most likely disease name. If the image is not a lesion photo (e.g., poster, icon, cartoon) or is too poor-quality to assess, return “Not applicable”. Use only visual evidence and the user text; do not invent details.
+    
+            **image or clinical description**
+            '''
+                + description +
+                '''
+            **Task (user)**
+            Answer the question: “What is the name of the disease shown in the image?
+            <image>”
+            Return a single word or short phrase for the primary answer, and provide top-3 possible diseases with probabilities. Answer in English.
+    
+            **Output rules**
+            1. Output strict JSON only, no extra text.
+            2. `answer` must be one word or a short phrase.
+            3. `top3` has exactly 3 items, each item includes fields `disease`, `prob`, and `reason`; the list is sorted by `prob` (0–1) in descending order, and the three `prob` values sum to 1.0 (±0.01). The `reason` is a concise morphological justification (e.g., region, color/shape/border/texture, elevation, perilesional skin).
+            4. If the image is not a real lesion or is unreadable, set `answer` to "Not applicable" and return an empty array for `top3`.
+            5. Keep reasoning concise and purely morphological (region, color/shape/border/texture, elevation, perilesional skin). No treatment advice.
+    
+            **JSON schema**
+            {
+              "answer": "<single word or short phrase>",
+              "top3": [
+                {"disease": "<name>", "prob": 0.00, "reason": "<short morphological rationale>"},
+                {"disease": "<name>", "prob": 0.00, "reason": "<short morphological rationale>"},
+                {"disease": "<name>", "prob": 0.00, "reason": "<short morphological rationale>"}
+              ],
+              "reason": {
+                "region": "<if discernible>",
+                "lesion_morphology": {
+                  "size_mm": "<if scale visible, else null>",
+                  "shape": "<round/oval/irregular>",
+                  "border": "<well-defined/ill-defined; smooth/notched>",
+                  "colour": "<uniform/variegated + hues>",
+                  "surface": "<smooth/scaly/crusted/ulcerated/verrucous>"
+                },
+                "elevation": "<flat/slightly raised/plaque/nodule/depressed/NA>",
+                "perilesional_skin": "<erythema/induration/atrophy/scale/bleeding/NA>"
+              },
+              "quality_flags": {
+                "non_lesion_image": false,
+                "low_resolution_or_glare": false,
+                "occlusion": false
+              }
+            }
+            '''
+        )
+
         primary_img_path = os.path.join("/home/william/dataset/skin/Derm1M", sample["image"])
         image = Image.open(primary_img_path).convert("RGB")
         messages = {"prompt": prompt_text, "image": image}
