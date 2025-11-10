@@ -87,6 +87,33 @@ class LingShu:
         for idx, messages in enumerate(messages_list, start=1):
             start_times = time.perf_counter()
             result = self.generate_output(messages)
+#             result ='''
+#             {
+#   "answer": "vasculitis",
+#   "top3": [
+#     {"disease": "Post-inflammatory hyperpigmentation", "prob": 0.95, "reason": "Darkened skin tone with irregular pigmentation"},
+#     {"disease": "Melasma", "prob": 0.05, "reason": "Darkened skin tone with irregular pigmentation"},
+#     {"disease": "Lichen planus pigmentosus", "prob": 0.00, "reason": "Darkened skin tone with irregular pigmentation"}
+#   ],
+#   "reason": {
+#     "region": "Face",
+#     "lesion_morphology": {
+#       "size_mm": null,
+#       "shape": "Irregular",
+#       "border": "Ill-defined",
+#       "colour": "Uniform dark",
+#       "surface": "Smooth"
+#     },
+#     "elevation": "Flat",
+#     "perilesional_skin": "Normal"
+#   },
+#   "quality_flags": {
+#     "non_lesion_image": false,
+#     "low_resolution_or_glare": false,
+#     "occlusion": false
+#   }
+# }
+#             '''
             end_times = time.perf_counter()
             delta = end_times - start_times
             print(f"idx:{idx},result-------------:{result},total_time:{delta}")

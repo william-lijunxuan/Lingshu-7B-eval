@@ -7,7 +7,7 @@ import os
 import json
 from PIL import Image
 from mathruler.grader import extract_boxed_content
-from ..utils.utils import load_and_maybe_compress,save_json,extract,judger,get_compare_messages,judge_open_end_vqa,judge_judgement,judge_judgement_close_options,judge_close_end_vqa
+from ..utils.utils import load_and_maybe_compress,save_json,extract,judger,get_compare_messages,judge_open_end_vqa,judge_judgement,judge_judgement_close_options,judge_close_end_vqa,judge_close_end_vqa_json
 from distutils.util import strtobool
 
 class Derm1m(BaseDataset):
@@ -55,16 +55,16 @@ class Derm1m(BaseDataset):
         #                 3. lesions: size (if scale is available in the image), shape, definition, color, texture.
         #                 4. elevation: Description of the lesion or wound relative to the skin surface of the patient.
         #                 5. skin texture surrounding the lesion (e.g. coarse/thickness/atrophic/erythema/bleeding, etc)\n<image>"""
-        description = None
-        for conv in sample["conversations"]:
-            if conv["from"] == "gpt":
-                description = conv["value"]
-                break
+        description = sample["caption"]
+        # for conv in sample["conversations"]:
+        #     if conv["from"] == "gpt":
+        #         description = conv["value"]
+        #         break
         prompt_text = (
                 '''
             **Instruction (system)**
             You are a dermatology vision–language assistant. Given one clinical or dermoscopic image and optional user text, infer the most likely disease name. If the image is not a lesion photo (e.g., poster, icon, cartoon) or is too poor-quality to assess, return “Not applicable”. Use only visual evidence and the user text; do not invent details.
-    
+
             **image or clinical description**
             '''
                 + description +
@@ -73,14 +73,14 @@ class Derm1m(BaseDataset):
             Answer the question: “What is the name of the disease shown in the image?
             <image>”
             Return a single word or short phrase for the primary answer, and provide top-3 possible diseases with probabilities. Answer in English.
-    
+
             **Output rules**
             1. Output strict JSON only, no extra text.
             2. `answer` must be one word or a short phrase.
             3. `top3` has exactly 3 items, each item includes fields `disease`, `prob`, and `reason`; the list is sorted by `prob` (0–1) in descending order, and the three `prob` values sum to 1.0 (±0.01). The `reason` is a concise morphological justification (e.g., region, color/shape/border/texture, elevation, perilesional skin).
             4. If the image is not a real lesion or is unreadable, set `answer` to "Not applicable" and return an empty array for `top3`.
             5. Keep reasoning concise and purely morphological (region, color/shape/border/texture, elevation, perilesional skin). No treatment advice.
-    
+
             **JSON schema**
             {
               "answer": "<single word or short phrase>",
@@ -159,14 +159,13 @@ class Derm1m(BaseDataset):
             elif "<answer>" in response:
                 response = extract(response, "answer")
 
-            # answer = out_sample["answer"]
-            answer = None
-            for conv in out_sample["conversations"]:
-                if conv["from"] == "gpt":
-                    answer = conv["value"]
-                    break
-                    # question_type = out_sample["question_type"]
-            question_type = "open_end_QA"
+            answer = out_sample["answer"]
+            # answer = None
+            # for conv in out_sample["conversations"]:
+            #     if conv["from"] == "gpt":
+            #         answer = conv["value"]
+            #         break
+            question_type = out_sample["question_type"]
 
             answer = answer.lower().strip()
             response = response.lower().strip()
@@ -192,7 +191,7 @@ class Derm1m(BaseDataset):
                     metrics["open"][metric] += c_metrics[metric]
             elif question_type == "close_end_QA":
                 metrics["close"]["total"] += 1
-                correct = judge_close_end_vqa(answer, response)
+                correct = judge_close_end_vqa_json(answer, response)
                 out_samples[i]["correct"] = correct
                 if correct:
                     metrics["close"]["right"] += 1
