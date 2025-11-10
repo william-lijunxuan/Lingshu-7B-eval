@@ -34,7 +34,7 @@ from tenacity import (
     stop_after_attempt,
     wait_fixed,
 )
-
+import unicodedata
 lang2model = defaultdict(lambda: "bert-base-multilingual-cased")
 
 SCIBERT_URL_DICT = {
@@ -1108,3 +1108,101 @@ def get_tokenizer(model_type, use_fast=False):
         tokenizer = AutoTokenizer.from_pretrained(model_type)
 
     return tokenizer
+
+
+
+def _norm(s: str) -> str:
+    """Lightweight medical-term normalization."""
+    if s is None:
+        return ""
+    s = unicodedata.normalize("NFKC", str(s)).lower().strip()
+    s = s.replace("’", "'").replace("‘", "'").replace("“", '"').replace("”", '"').replace("–", "-").replace("—", "-")
+    # British ↔ American variants
+    s = s.replace("naevus", "nevus").replace("naevi", "nevi").replace("haemangioma", "hemangioma")
+    # Common abbreviations
+    s = s.replace(" pih", " post-inflammatory hyperpigmentation").replace("pih", "post-inflammatory hyperpigmentation")
+    s = s.replace("bcc", "basal cell carcinoma").replace("scc", "squamous cell carcinoma").replace(" sk", " seborrheic keratosis")
+    s = s.replace(" ak", " actinic keratosis")
+    # Hyphens → spaces, collapse non-alnum
+    s = s.replace("-", " ")
+    s = re.sub(r"[^a-z0-9\s]", " ", s)
+    s = re.sub(r"\s+", " ", s).strip()
+    return s
+
+def _alias_map():
+    """Alias → canonical string map."""
+    groups = [
+        # exact pairs requested
+        {"scar", "scarring", "cicatrix"},
+        {"melanocytic nevus", "melanocytic nevi", "nevus", "nevi", "mole", "moles", "naevus", "naevi"},
+        {"epidermal cyst", "epidermoid cyst", "sebaceous cyst", "infundibular cyst"},
+        {"angioma", "hemangioma", "cherry angioma", "senile hemangioma"},
+        {"acrochordon", "skin tag", "skin tags"},
+        # useful dermatology aliases
+        {"basal cell carcinoma", "bcc"},
+        {"squamous cell carcinoma", "scc"},
+        {"seborrheic keratosis", "sk"},
+        {"actinic keratosis", "ak"},
+        {"post inflammatory hyperpigmentation", "post-inflammatory hyperpigmentation", "pih"},
+        {"melasma", "chloasma"},
+        {"tinea", "dermatophytosis", "ringworm"},
+        {"molluscum contagiosum", "molluscum"},
+        {"urticaria", "hives"},
+        {"acne vulgaris", "acne"},
+        {"psoriasis", "psoriasis vulgaris"},
+        {"vitiligo"},
+        {"lichen planus"},
+        {"impetigo"},
+        {"folliculitis"},
+        {"paronychia"},
+        {"onychomycosis"},
+        {"cellulitis"},
+        {"abscess"},
+        {"rosacea"},
+        {"viral wart", "wart", "verruca", "hpv wart"},
+        {"hemangioma", "haemangioma"},  # safety duplicate
+    ]
+    alias2canon = {}
+    for g in groups:
+        # choose a stable canonical: first sorted normalized term
+        norm_group = sorted(_norm(x) for x in g if _norm(x))
+        if not norm_group:
+            continue
+        canon = norm_group[0]
+        for x in norm_group:
+            alias2canon[x] = canon
+    return alias2canon
+
+_ALIAS2CANON = _alias_map()
+
+def _canonical(term: str) -> str:
+    n = _norm(term)
+    return _ALIAS2CANON.get(n, n)
+
+def judge_close_end_vqa_json(answer: str, response: str) -> bool:
+    """
+    Return True if `answer` matches response['answer'] exactly after normalization,
+    or if both map to the same canonical term via alias groups; otherwise False.
+    """
+    try:
+        pred = json.loads(response).get("answer", None)
+    except Exception:
+        # try to recover if response has leading/trailing noise
+        try:
+            start = response.find("{")
+            end = response.rfind("}")
+            pred = json.loads(response[start:end+1]).get("answer", None) if start != -1 and end != -1 else None
+        except Exception:
+            pred = None
+
+    if pred is None:
+        return False
+
+    a_norm = _norm(answer)
+    p_norm = _norm(pred)
+    if a_norm == p_norm:
+        return True
+
+    a_can = _canonical(a_norm)
+    p_can = _canonical(p_norm)
+    return a_can == p_can

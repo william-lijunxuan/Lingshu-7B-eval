@@ -32,7 +32,7 @@ EVAL_DATASETS = "Derm1m"
 EVAL_LOCAL_DATASETS_FLAG ="True"
 # EVAL_LOCAL_DATASETS_FILE ="/home/william/dataset/skin/SkinCAP/SkinCAP_20250712_121252.json,/home/william/dataset/skin/SkinCAP/SkinCAP_20250712_013256.json,/home/william/dataset/skin/SKINgpt/20250711055029_SKINgpt_multiple_choice_QA.json,/home/william/dataset/skin/MM-SkinQA/MM-SkinQA_20250711213519.json"
 # EVAL_LOCAL_DATASETS_FILE ="/home/william/dataset/skin/SKINgpt/20250711055029_SKINgpt_multiple_choice_QA.json,/home/william/dataset/skin/MM-SkinQA/MM-SkinQA_20250711213519.json"
-EVAL_LOCAL_DATASETS_FILE ="/home/william/dataset/skin/Derm1M/Derm1M_train.jsonl"
+EVAL_LOCAL_DATASETS_FILE ="/home/william/dataset/skin/Derm1M/eval_Derm1M_train_json_1k.jsonl"
 # EVAL_LOCAL_DATASETS_FILE ="/home/william/dataset/skin/Derm1M/Derm1M_train_qwen_prompt.jsonl"
 
 EVAL_DATASET_PATH = "/home/william/dataset/skin/Derm1M"
