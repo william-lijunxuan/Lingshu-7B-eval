@@ -2,8 +2,8 @@
 today_str=$(date +%Y%m%d_%H%M%S)
 echo $today_str
 
-source ~/miniforge3/etc/profile.d/conda.sh
-conda activate lingshu
+#source ~/miniforge3/etc/profile.d/conda.sh
+#conda activate lingshu
 
 # dataset and RAG config
 DATASET_NAME="MMSkinQA_SKINgpt"
@@ -30,7 +30,7 @@ MODEL_PATH="/mnt/d/skinalor/model/Lingshu-7B"
 MODEL_NAME="LingShu"
 CONFIG_MODEL_NAME="Lingshu"
 #ADAPTER_PATH="/mnt/d/skinalor/model/Lingshu-7B-Finetuning/qwenvl/scripts/output"
-ADAPTER_PATH="/mnt/d/skinalor/model/Lingshu-7B-eval/output"
+ADAPTER_PATH="/mnt/d/skinalor/model/Lingshu-7B-Finetuning/output"
 #ADAPTER_PATH = None
 
 
