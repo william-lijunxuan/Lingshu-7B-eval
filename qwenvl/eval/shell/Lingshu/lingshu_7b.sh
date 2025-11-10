@@ -20,7 +20,7 @@ EMBEDDING_MODEL_NAME="openai/clip-vit-base-patch32"
 DATASETS_PATH="redlessone"
 EVAL_DATASETS="Derm1m"
 EVAL_LOCAL_DATASETS_FLAG="True"
-EVAL_LOCAL_DATASETS_FILE="/mnt/d/skinalor/dataset/skin/Derm1M/Derm1M_train.jsonl"
+EVAL_LOCAL_DATASETS_FILE="/mnt/d/skinalor/dataset/skin/Derm1M/eval_Derm1M_train_json_1k.jsonl"
 
 # output config
 OUTPUT_PATH="eval_results/Lingshu-7B"
@@ -29,8 +29,8 @@ OUTPUT_PATH="eval_results/Lingshu-7B"
 MODEL_PATH="/mnt/d/skinalor/model/Lingshu-7B"
 MODEL_NAME="LingShu"
 CONFIG_MODEL_NAME="Lingshu"
-ADAPTER_PATH="/mnt/d/skinalor/model/Lingshu-7B-Finetuning/qwenvl/scripts/output"
-#ADAPTER_PATH="/mnt/d/skinalor/model/Lingshu-7B-eval/qwenvl/eval/output"
+#ADAPTER_PATH="/mnt/d/skinalor/model/Lingshu-7B-Finetuning/qwenvl/scripts/output"
+ADAPTER_PATH="/mnt/d/skinalor/model/Lingshu-7B-eval/output"
 #ADAPTER_PATH = None
 
 
