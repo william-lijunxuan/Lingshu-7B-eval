@@ -21,18 +21,16 @@ DATASETS_PATH="redlessone"
 EVAL_DATASETS="Derm1m"
 EVAL_LOCAL_DATASETS_FLAG="True"
 #EVAL_LOCAL_DATASETS_FILE="/home/william/dataset/skin/Derm1M/Derm1M_train_qwen_prompt.jsonl"
-#EVAL_LOCAL_DATASETS_FILE="/home/william/dataset/skin/Derm1M/Derm1M_train.jsonl"
 EVAL_LOCAL_DATASETS_FILE="/home/william/dataset/skin/Derm1M/eval_Derm1M_train_json_1k.jsonl"
 
 # output config
-OUTPUT_PATH="eval_results/Lingshu-7B"
+OUTPUT_PATH="eval_results/Qwen3-VL-8B-Instruct"
 
 # VLM model config
-MODEL_PATH="/home/william/model/Lingshu-7B"
-MODEL_NAME="LingShu"
-CONFIG_MODEL_NAME="Lingshu"
+MODEL_PATH="/home/william/model/Qwen3-VL-8B-Instruct"
+MODEL_NAME="Qwen3vl_8b"
+CONFIG_MODEL_NAME="Qwen3vl_8b"
 #ADAPTER_PATH="/home/william/model/Lingshu-7B-Finetuning/qwenvl/scripts/output"
-#ADAPTER_PATH="/home/william/model/Lingshu-7B-Finetuning/qwenvl/scripts/outputqwen3vl"
 #ADAPTER_PATH="/home/william/model/Lingshu-7B-eval/qwenvl/eval/output"
 ADAPTER_PATH=None
 

@@ -61,7 +61,7 @@ parser.add_argument('--chroma_persist_path', type=str, required=True)
 parser.add_argument('--chroma_collection_name', type=str, required=True)
 parser.add_argument('--embedding_model_name', type=str, required=True)
 parser.add_argument('--image_num', type=str, required=False,default="0")
-parser.add_argument('--adapter_path', type=str, required=False,default="")
+parser.add_argument('--adapter_path', type=str, required=False,default="None")
 args = parser.parse_args()
 
 # Env setup
@@ -103,7 +103,7 @@ logger = Logger(args.model_name)
 total_results_path = os.path.join(args.output_path, 'total_results.json')
 from benchmark import prepare_benchmark
 
-# print(f"RAG:{args.rag_flag}\n")
+print(f"adapter_path:{args.adapter_path}\n")
 # print(f"RAG:{args.dataset_name}\n")
 
 try:
