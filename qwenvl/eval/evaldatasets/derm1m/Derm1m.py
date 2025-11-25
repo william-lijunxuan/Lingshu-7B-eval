@@ -70,8 +70,7 @@ class Derm1m(BaseDataset):
                 + description +
                 '''
             **Task (user)**
-            Answer the question: “What is the name of the disease shown in the image?
-            <image>”
+            Answer the question: “What is the name of the disease shown in the image?”
             Return a single word or short phrase for the primary answer, and provide top-3 possible diseases with probabilities. Answer in English.
 
             **Output rules**
