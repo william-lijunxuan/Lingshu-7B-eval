@@ -37,7 +37,11 @@ class MedGemma:
     def __new__(cls, model_path: str, args: Any) -> Any:
         from Medgemma.MedGemma import MedGemma
         return MedGemma(model_path, args)
-
+@VLMRegistry.register("Hulu_Med_7B")
+class Hulu_Med_7B:
+    def __new__(cls, model_path: str, args: Any) -> Any:
+        from .Hulu_Med_7B.Hulu_Med_7B import Hulu_Med_7B
+        return Hulu_Med_7B(model_path, args)
 
 def init_llm(args):
     try:

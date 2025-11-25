@@ -31,8 +31,8 @@ parser = ArgumentParser()
 parser.add_argument(
     "--config_model_name",
     type=str,
-    default="Lingshu",
-    help="name of model, e.g. Lingshu, MedVLM_R1, medgemma_4b_it"
+    default="Hulu_Med_7B",
+    help="name of model, e.g. Lingshu, MedVLM_R1, medgemma_4b_it,Hulu_Med_7B"
 )
 pre_args, _ = parser.parse_known_args()
 

@@ -34,8 +34,8 @@ class Derm1m(BaseDataset):
                 with open(path, "r", encoding="utf-8") as f:
                     records = json.load(f)
             train_ds = Dataset.from_list(records)
-            dataset = train_ds.select(range(2))
-            # dataset = train_ds
+            # dataset = train_ds.select(range(2))
+            dataset = train_ds
             for idx,sample in tqdm(enumerate(dataset)):
                 if idx % self.num_chunks == self.chunk_idx:
                     sample = self.construct_multi_image_rag_prompt(sample)
@@ -70,8 +70,8 @@ class Derm1m(BaseDataset):
                 + description +
                 '''
             **Task (user)**
-            Answer the question: “What is the name of the disease shown in the image?
-            <image>”
+            Answer the question: “What is the name of the disease shown in the image?”
+
             Return a single word or short phrase for the primary answer, and provide top-3 possible diseases with probabilities. Answer in English.
 
             **Output rules**
@@ -113,6 +113,7 @@ class Derm1m(BaseDataset):
         primary_img_path = os.path.join("/home/william/dataset/skin/Derm1M", sample["image"])
         image = Image.open(primary_img_path).convert("RGB")
         messages = {"prompt": prompt_text, "image": image}
+        # print(f"prompt_text{prompt_text}")
         sample["messages"] = messages
         del sample["image"]
         sample["image_path"] = primary_img_path
@@ -138,7 +139,7 @@ class Derm1m(BaseDataset):
                 "rouge2": 0,
                 "rougel": 0,
                 "Meteor" : 0,
-                # "BertScore" : 0,
+                "BertScore" : 0,
                 "precision": 0,
                 "recall": 0,
                 "f1": 0,
@@ -153,7 +154,7 @@ class Derm1m(BaseDataset):
         open_id = []
         for i, out_sample in tqdm(enumerate(out_samples)):
             response = out_sample["response"]
-            print(f"response:{response}")
+            # print(f"response:{response}")
             if extract_boxed_content(response) != "None":
                 response = extract_boxed_content(response)
             elif "<answer>" in response:
@@ -189,14 +190,26 @@ class Derm1m(BaseDataset):
                     metrics["open"]["right"] += 1
                 for metric in c_metrics:
                     metrics["open"][metric] += c_metrics[metric]
-            elif question_type == "close_end_QA":
+            elif question_type == "close_end_QA_equels":
                 metrics["close"]["total"] += 1
                 correct = judge_close_end_vqa_json(answer, response)
                 out_samples[i]["correct"] = correct
                 if correct:
                     metrics["close"]["right"] += 1
                     metrics["total metrics"]["right"] += 1
-
+            elif question_type == "close_end_QA":
+                metrics["open"]["total"] += 1
+                correct = judge_close_end_vqa_json(answer, response)
+                data = json.loads(response)
+                response = data["answer"]
+                c_metrics = judge_open_end_vqa(answer, response)
+                out_samples[i]["correct"] = correct
+                out_samples[i]["metrics"] = c_metrics
+                if correct:
+                    metrics["total metrics"]["right"] += 1
+                    metrics["open"]["right"] += 1
+                for metric in c_metrics:
+                    metrics["open"][metric] += c_metrics[metric]
                 # if os.environ.get("use_llm_judge", "False") == "True":
                 #     messages = get_compare_messages(question, response, answer)
                 #     messages_list.append(messages)
