@@ -35,162 +35,24 @@ from tenacity import (
     wait_fixed,
 )
 import unicodedata
-lang2model = defaultdict(lambda: "bert-base-multilingual-cased")
+from nltk.translate.meteor_score import meteor_score
+from bert_score.scorer import BERTScorer
 
-SCIBERT_URL_DICT = {
-    "scibert-scivocab-uncased": "https://s3-us-west-2.amazonaws.com/ai2-s2-research/scibert/pytorch_models/scibert_scivocab_uncased.tar",  # recommend by the SciBERT authors
-    "scibert-scivocab-cased": "https://s3-us-west-2.amazonaws.com/ai2-s2-research/scibert/pytorch_models/scibert_scivocab_cased.tar",
-    "scibert-basevocab-uncased": "https://s3-us-west-2.amazonaws.com/ai2-s2-research/scibert/pytorch_models/scibert_basevocab_uncased.tar",
-    "scibert-basevocab-cased": "https://s3-us-west-2.amazonaws.com/ai2-s2-research/scibert/pytorch_models/scibert_basevocab_cased.tar",
-}
 
-model2layers = {
-    "bert-base-uncased": 9,  # 0.6925188074454226
-    "/mnt/d/skinalor/model/bert-base-uncased": 9,  # 0.6925188074454226
-    "bert-large-uncased": 18,  # 0.7210358126642836
-    "bert-base-cased-finetuned-mrpc": 9,  # 0.6721947475618048
-    "bert-base-multilingual-cased": 9,  # 0.6680687802637132
-    "bert-base-chinese": 8,
-    "roberta-base": 10,  # 0.706288719158983
-    "roberta-large": 17,  # 0.7385974720781534
-    "roberta-large-mnli": 19,  # 0.7535618640417984
-    "roberta-base-openai-detector": 7,  # 0.7048158349432633
-    "roberta-large-openai-detector": 15,  # 0.7462770207355116
-    "xlnet-base-cased": 5,  # 0.6630103662114238
-    "xlnet-large-cased": 7,  # 0.6598800720297179
-    "xlm-mlm-en-2048": 6,  # 0.651262570131464
-    "xlm-mlm-100-1280": 10,  # 0.6475166424401905
-    # "scibert-scivocab-uncased": 8,  # 0.6590354319927313
-    # "scibert-scivocab-cased": 9,  # 0.6536375053937445
-    # "scibert-basevocab-uncased": 9,  # 0.6748944832703548
-    # "scibert-basevocab-cased": 9,  # 0.6524624150542374
-    "allenai/scibert_scivocab_uncased": 8,  # 0.6590354393124127
-    "allenai/scibert_scivocab_cased": 9,  # 0.6536374902465466
-    "nfliu/scibert_basevocab_uncased": 9,  # 0.6748945076082333
-    "distilroberta-base": 5,  # 0.6797558139322964
-    "distilbert-base-uncased": 5,  # 0.6756659152782033
-    "distilbert-base-uncased-distilled-squad": 4,  # 0.6718318036382493
-    "distilbert-base-multilingual-cased": 5,  # 0.6178131050889238
-    "albert-base-v1": 10,  # 0.654237567249745
-    "albert-large-v1": 17,  # 0.6755890754323239
-    "albert-xlarge-v1": 16,  # 0.7031844211905911
-    "albert-xxlarge-v1": 8,  # 0.7508642218461096
-    "albert-base-v2": 9,  # 0.6682455591837927
-    "albert-large-v2": 14,  # 0.7008537594374035
-    "albert-xlarge-v2": 13,  # 0.7317228357869254
-    "albert-xxlarge-v2": 8,  # 0.7505160257184014
-    "xlm-roberta-base": 9,  # 0.6506799445871697
-    "xlm-roberta-large": 17,  # 0.6941551437476826
-    "google/electra-small-generator": 9,  # 0.6659421842117754
-    "google/electra-small-discriminator": 11,  # 0.6534639151385759
-    "google/electra-base-generator": 10,  # 0.6730033453857188
-    "google/electra-base-discriminator": 9,  # 0.7032089590812965
-    "google/electra-large-generator": 18,  # 0.6813370013104459
-    "google/electra-large-discriminator": 14,  # 0.6896675824733477
-    "google/bert_uncased_L-2_H-128_A-2": 1,  # 0.5887998733228855
-    "google/bert_uncased_L-2_H-256_A-4": 1,  # 0.6114863547661203
-    "google/bert_uncased_L-2_H-512_A-8": 1,  # 0.6177345529192847
-    "google/bert_uncased_L-2_H-768_A-12": 2,  # 0.6191261237956839
-    "google/bert_uncased_L-4_H-128_A-2": 3,  # 0.6076202863798991
-    "google/bert_uncased_L-4_H-256_A-4": 3,  # 0.6205239036810148
-    "google/bert_uncased_L-4_H-512_A-8": 3,  # 0.6375351621856903
-    "google/bert_uncased_L-4_H-768_A-12": 3,  # 0.6561849979644787
-    "google/bert_uncased_L-6_H-128_A-2": 5,  # 0.6200458425360283
-    "google/bert_uncased_L-6_H-256_A-4": 5,  # 0.6277501629539081
-    "google/bert_uncased_L-6_H-512_A-8": 5,  # 0.641952305130849
-    "google/bert_uncased_L-6_H-768_A-12": 5,  # 0.6762186226247106
-    "google/bert_uncased_L-8_H-128_A-2": 7,  # 0.6186876506711779
-    "google/bert_uncased_L-8_H-256_A-4": 7,  # 0.6447993208267708
-    "google/bert_uncased_L-8_H-512_A-8": 6,  # 0.6489729408169956
-    "google/bert_uncased_L-8_H-768_A-12": 7,  # 0.6705203359541737
-    "google/bert_uncased_L-10_H-128_A-2": 8,  # 0.6126762064125278
-    "google/bert_uncased_L-10_H-256_A-4": 8,  # 0.6376350032576573
-    "google/bert_uncased_L-10_H-512_A-8": 9,  # 0.6579006292799915
-    "google/bert_uncased_L-10_H-768_A-12": 8,  # 0.6861146692220176
-    "google/bert_uncased_L-12_H-128_A-2": 10,  # 0.6184105693383591
-    "google/bert_uncased_L-12_H-256_A-4": 11,  # 0.6374004994430261
-    "google/bert_uncased_L-12_H-512_A-8": 10,  # 0.65880012149526
-    "google/bert_uncased_L-12_H-768_A-12": 9,  # 0.675911357700092
-    "amazon/bort": 0,  # 0.41927911053036643
-    "facebook/bart-base": 6,  # 0.7122259132414092
-    "facebook/bart-large": 10,  # 0.7448671872459683
-    "facebook/bart-large-cnn": 10,  # 0.7393148105835096
-    "facebook/bart-large-mnli": 11,  # 0.7531665445691358
-    "facebook/bart-large-xsum": 9,  # 0.7496408866539556
-    "t5-small": 6,  # 0.6813843919496912
-    "t5-base": 11,  # 0.7096044814981418
-    "t5-large": 23,  # 0.7244153820191929
-    "vinai/bertweet-base": 9,  # 0.6529471006118857
-    "microsoft/deberta-base": 9,  # 0.7088459455930344
-    "microsoft/deberta-base-mnli": 9,  # 0.7395257063907247
-    "microsoft/deberta-large": 16,  # 0.7511806792052013
-    "microsoft/deberta-large-mnli": 18,  # 0.7736263649679905
-    "microsoft/deberta-xlarge": 18,  # 0.7568670944373346
-    "microsoft/deberta-xlarge-mnli": 40,  # 0.7780600929333213
-    "YituTech/conv-bert-base": 10,  # 0.7058253551080789
-    "YituTech/conv-bert-small": 10,  # 0.6544473011107349
-    "YituTech/conv-bert-medium-small": 9,  # 0.6590097075123257
-    "microsoft/mpnet-base": 8,  # 0.724976539498804
-    "squeezebert/squeezebert-uncased": 9,  # 0.6543868703018726
-    "squeezebert/squeezebert-mnli": 9,  # 0.6654799051284791
-    "squeezebert/squeezebert-mnli-headless": 9,  # 0.6654799051284791
-    "tuner007/pegasus_paraphrase": 15,  # 0.7188349436772694
-    "google/pegasus-large": 8,  # 0.63960462272448
-    "google/pegasus-xsum": 11,  # 0.6836878575233349
-    "sshleifer/tiny-mbart": 2,  # 0.028246072231946733
-    "facebook/mbart-large-cc25": 12,  # 0.6582922975802958
-    "facebook/mbart-large-50": 12,  # 0.6464972230103133
-    "facebook/mbart-large-en-ro": 12,  # 0.6791285137459857
-    "facebook/mbart-large-50-many-to-many-mmt": 12,  # 0.6904136529270892
-    "facebook/mbart-large-50-one-to-many-mmt": 12,  # 0.6847906439540236
-    "allenai/led-base-16384": 6,  # 0.7122259170564179
-    "facebook/blenderbot_small-90M": 7,  # 0.6489176335400088
-    "facebook/blenderbot-400M-distill": 2,  # 0.5874774070540008
-    "microsoft/prophetnet-large-uncased": 4,  # 0.586496184234925
-    "microsoft/prophetnet-large-uncased-cnndm": 7,  # 0.6478379437729287
-    "SpanBERT/spanbert-base-cased": 8,  # 0.6824006863686848
-    "SpanBERT/spanbert-large-cased": 17,  # 0.705352690855603
-    "microsoft/xprophetnet-large-wiki100-cased": 7,  # 0.5852499775879524
-    "ProsusAI/finbert": 10,  # 0.6923213940752796
-    "Vamsi/T5_Paraphrase_Paws": 12,  # 0.6941611753807352
-    "ramsrigouthamg/t5_paraphraser": 11,  # 0.7200917597031539
-    "microsoft/deberta-v2-xlarge": 10,  # 0.7393675784473045
-    "microsoft/deberta-v2-xlarge-mnli": 17,  # 0.7620620803716714
-    "microsoft/deberta-v2-xxlarge": 21,  # 0.7520547670281869
-    "microsoft/deberta-v2-xxlarge-mnli": 22,  # 0.7742603457742682
-    "allenai/longformer-base-4096": 7,  # 0.7089559593129316
-    "allenai/longformer-large-4096": 14,  # 0.732408493548181
-    "allenai/longformer-large-4096-finetuned-triviaqa": 14,  # 0.7365882744744722
-    "zhiheng-huang/bert-base-uncased-embedding-relative-key": 4,  # 0.5995636595368777
-    "zhiheng-huang/bert-base-uncased-embedding-relative-key-query": 7,  # 0.6303599452145718
-    "zhiheng-huang/bert-large-uncased-whole-word-masking-embedding-relative-key-query": 19,  # 0.6896878492850327
-    "google/mt5-small": 8,  # 0.6401166527273479
-    "google/mt5-base": 11,  # 0.5663956536597241
-    "google/mt5-large": 19,  # 0.6430931371732798
-    "google/mt5-xl": 24,  # 0.6707200963021145
-    "google/bigbird-roberta-base": 10,  # 0.6695606423502717
-    "google/bigbird-roberta-large": 14,  # 0.6755874042374509
-    "google/bigbird-base-trivia-itc": 8,  # 0.6930725491629892
-    "princeton-nlp/unsup-simcse-bert-base-uncased": 10,  # 0.6703066531921142
-    "princeton-nlp/unsup-simcse-bert-large-uncased": 18,  # 0.6958302800755326
-    "princeton-nlp/unsup-simcse-roberta-base": 8,  # 0.6436615893535319
-    "princeton-nlp/unsup-simcse-roberta-large": 13,  # 0.6812864385585965
-    "princeton-nlp/sup-simcse-bert-base-uncased": 10,  # 0.7068074935240984
-    "princeton-nlp/sup-simcse-bert-large-uncased": 18,  # 0.7111049471332378
-    "princeton-nlp/sup-simcse-roberta-base": 10,  # 0.7253123806661946
-    "princeton-nlp/sup-simcse-roberta-large": 16,  # 0.7497820277237173
-    "dbmdz/bert-base-turkish-cased": 10,  # WMT18 seg en-tr 0.5522827687776142
-    "dbmdz/distilbert-base-turkish-cased": 4,  # WMT18 seg en-tr 0.4742268041237113
-    "google/byt5-small": 1,  # 0.5100025975052146
-    "google/byt5-base": 17,  # 0.5810347173565313
-    "google/byt5-large": 30,  # 0.6151895697554877
-    "microsoft/deberta-v3-xsmall": 10,  # 0.6941803815412021
-    "microsoft/deberta-v3-small": 4,  # 0.6651551203179679
-    "microsoft/deberta-v3-base": 9,  # 0.7261586651018335
-    "microsoft/mdeberta-v3-base": 10,  # 0.6778713684091584
-    "microsoft/deberta-v3-large": 12,  # 0.6927693082293821
-    "khalidalt/DeBERTa-v3-large-mnli": 18,  # 0.7428756686018376
-}
+_BERT_SCORER = None
+
+
+def get_bert_scorer():
+    global _BERT_SCORER
+    if _BERT_SCORER is None:
+        _BERT_SCORER = BERTScorer(
+            lang="en",
+            rescale_with_baseline=False,
+            idf=False,
+            batch_size=64,
+            nthreads=4,
+        )
+    return _BERT_SCORER
 def tokenize(text):
     text = text.lower().replace(".", " .").split(" ")
     return text
@@ -208,28 +70,60 @@ def rouge(pred,target):
 
 # METEOR
 def calculate_meteor(predictions, ground_truths):
-    meteor_scores = [nltk.translate.meteor_score.meteor_score([truth.split()], pred.split()) for pred, truth in
-                     zip(predictions, ground_truths)]
-    return sum(meteor_scores) / len(meteor_scores) if meteor_scores else 0
+    score = meteor_score([predictions.split()], ground_truths.split())
+    return score
+    # meteor_scores = [nltk.translate.meteor_score.meteor_score([truth.split()], pred.split()) for pred, truth in
+    #                  zip(predictions, ground_truths)]
+    # return sum(meteor_scores) / len(meteor_scores) if meteor_scores else 0
 
 
 # # BERTScore
 def calculate_bertscore(predictions, ground_truths):
-    model_path = '/mnt/d/skinalor/model/bert-base-uncased'
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    from .Bertscore import BERTScorer
-    scorer = BERTScorer(model_type=model_path, device=device, lang='en')
-    precision, recall, f1 = scorer.score(predictions, ground_truths)
-    # 计算平均值
-    avg_precision = precision.mean().item()
-    avg_recall = recall.mean().item()
-    avg_f1 = f1.mean().item()
+    """
+    Wrapper around BERTScorer.score that:
+    - accepts either str or List[str]
+    - reuses a global BERTScorer instance
+    - returns the mean F1 score as a scalar float
+    """
+    # Normalize input types: allow str or List[str]
+    if isinstance(predictions, str):
+        predictions_list = [predictions]
+    else:
+        predictions_list = list(predictions)
 
-    return {
-        "bert_precision": avg_precision,
-        "bert_recall": avg_recall,
-        "bert_f1": avg_f1
-    }
+    if isinstance(ground_truths, str):
+        ground_truths_list = [ground_truths]
+    else:
+        ground_truths_list = list(ground_truths)
+
+    if len(predictions_list) != len(ground_truths_list):
+        raise ValueError(
+            f"Length mismatch in calculate_bertscore: "
+            f"{len(predictions_list)} preds vs {len(ground_truths_list)} refs"
+        )
+
+
+    predictions_list = [(p or "").strip() for p in predictions_list]
+    ground_truths_list = [(g or "").strip() for g in ground_truths_list]
+
+
+    if all(p == "" for p in predictions_list) or all(g == "" for g in ground_truths_list):
+        print(f"predictions:{predictions_list}, ground_truths:{ground_truths_list}")
+        print("P_valid:0.0, R_valid:0.0, F_valid:0.0 (empty texts)")
+        return 0.0
+
+    scorer = get_bert_scorer()
+    P_valid, R_valid, F_valid = scorer.score(predictions_list, ground_truths_list)
+
+    p_mean = P_valid.mean().item()
+    r_mean = R_valid.mean().item()
+    f_mean = F_valid.mean().item()
+
+    print(f"predictions:{predictions_list}, ground_truths:{ground_truths_list}")
+    print(f"P_valid:{p_mean}, R_valid:{r_mean}, F_valid:{f_mean}")
+
+    return f_mean
+
 
 def get_compare_messages(question,response,answer):
     prompt = f"""
@@ -393,7 +287,7 @@ def judge_open_end_vqa(answer,response):
 
     # bert_score=calculate_bertscore(response,answer)
     meteor_score=calculate_meteor(response,answer)
-
+    bert_score=calculate_bertscore(response,answer)
     # bert_precision = bert_score["bert_precision"]
 
     em = response == answer
@@ -415,7 +309,7 @@ def judge_open_end_vqa(answer,response):
         "rouge2" : rouge_2,
         "rougel" :  rouge_l,
         "Meteor" :meteor_score,
-        # "BertScore" :bert_precision,
+        "BertScore" :bert_score,
         "precision": precision,
         "recall": recall,
         "f1" :f1         
@@ -1160,6 +1054,7 @@ def _alias_map():
         {"abscess"},
         {"rosacea"},
         {"viral wart", "wart", "verruca", "hpv wart"},
+        {"Behçet's syndrome", "behcets disease", "behcets","Behçet syndrome"},
         {"hemangioma", "haemangioma"},  # safety duplicate
     ]
     alias2canon = {}
