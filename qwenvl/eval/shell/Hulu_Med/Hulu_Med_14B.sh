@@ -8,7 +8,7 @@ conda activate jupyter_env
 # dataset and RAG config
 DATASET_NAME="MMSkinQA_SKINgpt"
 RAG_FLAG="False"
-PROJECT_ROOT="/home/william/model/Skinalor/RAG/RAGDataSet"
+PROJECT_ROOT="/mnt/d/skinalor/model/Skinalor/RAG/RAGDataSet"
 DB_DIR="${PROJECT_ROOT}/${DATASET_NAME}"
 CHROMA_PERSIST_PATH="${DB_DIR}/chroma_db_skin"
 CHROMA_COLLECTION_NAME="skin_cases_multivector_${DATASET_NAME}"
@@ -20,18 +20,18 @@ EMBEDDING_MODEL_NAME="openai/clip-vit-base-patch32"
 DATASETS_PATH="redlessone"
 EVAL_DATASETS="Derm1m"
 EVAL_LOCAL_DATASETS_FLAG="True"
-#EVAL_LOCAL_DATASETS_FILE="/home/william/dataset/skin/Derm1M/Derm1M_train_qwen_prompt.jsonl"
-EVAL_LOCAL_DATASETS_FILE="/home/william/dataset/skin/Derm1M/eval_Derm1M_train_json_1k.jsonl"
+#EVAL_LOCAL_DATASETS_FILE="/mnt/d/skinalor/dataset/skin/Derm1M/Derm1M_train_qwen_prompt.jsonl"
+EVAL_LOCAL_DATASETS_FILE="/mnt/d/skinalor/dataset/skin/Derm1M/eval_Derm1M_train_json_1k.jsonl"
 
 # output config
 OUTPUT_PATH="eval_results/Hulu-Med-14B"
 
 # VLM model config
-MODEL_PATH="/home/william/model/Hulu-Med-14B"
+MODEL_PATH="/mnt/d/skinalor/model/Hulu-Med-14B"
 MODEL_NAME="Hulu_Med_7B"
 CONFIG_MODEL_NAME="Hulu_Med_7B"
-#ADAPTER_PATH="/home/william/model/Lingshu-7B-Finetuning/qwenvl/scripts/output"
-#ADAPTER_PATH="/home/william/model/Lingshu-7B-eval/qwenvl/eval/output"
+#ADAPTER_PATH="/mnt/d/skinalor/model/Lingshu-7B-Finetuning/qwenvl/scripts/output"
+#ADAPTER_PATH="/mnt/d/skinalor/model/Lingshu-7B-eval/qwenvl/eval/output"
 ADAPTER_PATH=None
 
 # vllm settings

@@ -11,8 +11,8 @@ except Exception:
 
 import torch
 
-model_path = "/home/william/model/Hulu-Med-7B"
-image_path = "/home/william/dataset/skin/Derm1M/IIYI/7_3.png"
+model_path = "/mnt/d/skinalor/model/Hulu-Med-7B"
+image_path = "/mnt/d/skinalor/dataset/skin/Derm1M/IIYI/7_3.png"
 
 model = AutoModelForCausalLM.from_pretrained(
     model_path,
