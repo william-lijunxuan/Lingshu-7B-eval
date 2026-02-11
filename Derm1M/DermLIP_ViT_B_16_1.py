@@ -2,9 +2,9 @@ import open_clip
 from PIL import Image
 import torch
 
-# DEFAULT_IMAGE = "/home/william/dataset/skin/SkinCAP/skincap/55.png"
-# DEFAULT_IMAGE = "/home/william/dataset/skin/Derm1M/IIYI/7_3.png" # amyloidosis
-DEFAULT_IMAGE = "/home/william/dataset/skin/Derm1M/twitter/151_0.png" # herpes simplex virus
+# DEFAULT_IMAGE = "/root/dataset/skin/SkinCAP/skincap/55.png"
+# DEFAULT_IMAGE = "/root/dataset/skin/Derm1M/IIYI/7_3.png" # amyloidosis
+DEFAULT_IMAGE = "/root/dataset/skin/Derm1M/twitter/151_0.png" # herpes simplex virus
 # Load model with huggingface checkpoint
 model, _, preprocess = open_clip.create_model_and_transforms(
     'hf-hub:redlessone/DermLIP_ViT-B-16'

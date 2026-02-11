@@ -19,7 +19,7 @@ def read_pairs_from_results_json(path: Path):
 
 
 # def main():
-#     json_path="/home/william/model/Lingshu-7B-eval/qwenvl/eval/eval_results/Lingshu-7B/20251103_165053/Derm1m0Baseline/results.json"
+#     json_path="/root/model/Lingshu-7B-eval/qwenvl/eval/eval_results/Lingshu-7B/20251103_165053/Derm1m0Baseline/results.json"
 #     predictions, ground_truths = read_pairs_from_results_json(Path(json_path))
 #
 #     n = min(len(predictions), len(ground_truths))
@@ -33,8 +33,8 @@ def read_pairs_from_results_json(path: Path):
 #     print(f"METEOR (avg): {meteor:.6f}")
 
 def main():
-    # json_path = "/home/william/model/Lingshu-7B-eval/qwenvl/eval/eval_results/Lingshu-7B/20251031_170556/Derm1m0Baseline/results.json" #finetuning 0.128322
-    json_path = "/home/william/model/Lingshu-7B-eval/qwenvl/eval/eval_results/Lingshu-7B/20251103_150525/Derm1m0Baseline/results.json" # baseline  0.099707
+    # json_path = "/root/model/Lingshu-7B-eval/qwenvl/eval/eval_results/Lingshu-7B/20251031_170556/Derm1m0Baseline/results.json" #finetuning 0.128322
+    json_path = "/root/model/Lingshu-7B-eval/qwenvl/eval/eval_results/Lingshu-7B/20251103_150525/Derm1m0Baseline/results.json" # baseline  0.099707
     predictions, ground_truths = read_pairs_from_results_json(Path(json_path))
 
     meteor_avg = calculate_meteor(predictions, ground_truths)

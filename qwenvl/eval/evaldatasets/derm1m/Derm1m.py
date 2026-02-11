@@ -20,7 +20,7 @@ class Derm1m(BaseDataset):
         self.chunk_idx = int(os.environ.get("chunk_idx",0))
         self.num_chunks = int(os.environ.get("num_chunks",1))
         self.eval_local_datasets_flag = bool(strtobool(os.environ.get("eval_local_datasets_flag",True)))
-        self.eval_local_datasets_file = str(os.environ.get("eval_local_datasets_file", "/home/william/dataset/skin/Derm1M/Derm1M_train.jsonl"))
+        self.eval_local_datasets_file = str(os.environ.get("eval_local_datasets_file", "/root/dataset/skin/Derm1M/Derm1M_train.jsonl"))
 
 
     def load_data(self):
@@ -137,8 +137,18 @@ class Derm1m(BaseDataset):
                 }
                 '''
             )
+            prompt = [
+                {"role": "system", "content": [{"type": "text", "text": SYSTEM}]},
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "image", "image": ex["image_path"]},
+                        {"type": "text", "text": USER_TEMPLATE.format(q=q)},
+                    ],
+                },
+            ]
 
-        primary_img_path = os.path.join("/home/william/dataset/skin/Derm1M", sample["image"])
+        primary_img_path = os.path.join("/root/dataset/skin/Derm1M", sample["image"])
         image = Image.open(primary_img_path).convert("RGB")
         messages = {"prompt": prompt_text, "image": image}
         print(f"prompt_text{prompt_text}")
