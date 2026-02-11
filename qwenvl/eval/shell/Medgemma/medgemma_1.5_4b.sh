@@ -2,8 +2,8 @@
 today_str=$(date +%Y%m%d_%H%M%S)
 echo $today_str
 
-source ~/miniforge3/etc/profile.d/conda.sh
-conda activate jupyter_env
+#source ~/miniforge3/etc/profile.d/conda.sh
+#conda activate jupyter_env
 
 # dataset and RAG config
 DATASET_NAME="MMSkinQA_SKINgpt"
