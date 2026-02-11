@@ -34,7 +34,8 @@ CONFIG_MODEL_NAME="MedGemma"
 #ADAPTER_PATH="/root/model/Lingshu-7B-Finetuning/qwenvl/scripts/output"
 #ADAPTER_PATH="/root/model/Lingshu-7B-Finetuning/qwenvl/scripts/outputqwen3vl"
 #ADAPTER_PATH="/root/model/Lingshu-7B-eval/qwenvl/eval/output"
-ADAPTER_PATH=None
+#ADAPTER_PATH=None
+ADAPTER_PATH=/root/model/GRPO_medgemma
 
 # vllm settings
 CUDA_VISIBLE_DEVICES="0"
