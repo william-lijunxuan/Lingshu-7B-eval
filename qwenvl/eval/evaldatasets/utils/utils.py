@@ -1101,3 +1101,24 @@ def judge_close_end_vqa_json(answer: str, response: str) -> bool:
     a_can = _canonical(a_norm)
     p_can = _canonical(p_norm)
     return a_can == p_can
+
+
+def parse_json_response(text: str):
+    if text is None:
+        raise ValueError("response is None")
+
+    s = text.strip()
+    if not s:
+        raise ValueError("empty response")
+
+    # ```json ... ```
+    m = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", s, flags=re.DOTALL | re.IGNORECASE)
+    if m:
+        return json.loads(m.group(1))
+
+    # First {...}
+    m = re.search(r"(\{.*\})", s, flags=re.DOTALL)
+    if m:
+        return json.loads(m.group(1))
+
+    return json.loads(s)

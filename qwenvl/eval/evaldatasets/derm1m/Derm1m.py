@@ -1,3 +1,5 @@
+from platform import system
+
 from ..utils.base_dataset import BaseDataset
 
 
@@ -7,8 +9,9 @@ import os
 import json
 from PIL import Image
 from mathruler.grader import extract_boxed_content
-from ..utils.utils import load_and_maybe_compress,save_json,extract,judger,get_compare_messages,judge_open_end_vqa,judge_judgement,judge_judgement_close_options,judge_close_end_vqa,judge_close_end_vqa_json
+from ..utils.utils import parse_json_response,save_json,extract,judger,get_compare_messages,judge_open_end_vqa,judge_judgement,judge_judgement_close_options,judge_close_end_vqa,judge_close_end_vqa_json
 from distutils.util import strtobool
+import re
 
 class Derm1m(BaseDataset):
     def __init__(self,idx,model,dataset_path,output_path):
@@ -34,7 +37,7 @@ class Derm1m(BaseDataset):
                 with open(path, "r", encoding="utf-8") as f:
                     records = json.load(f)
             train_ds = Dataset.from_list(records)
-            dataset = train_ds.select(range(1))
+            dataset = train_ds.select(range(30))
             # dataset = train_ds
             for idx,sample in tqdm(enumerate(dataset)):
                 if idx % self.num_chunks == self.chunk_idx:
@@ -111,11 +114,9 @@ class Derm1m(BaseDataset):
                 '''
             )
         elif sample["question_type"] == "close_end_QA":
+            systemMes="You are a dermatology vision–language assistant. Given one clinical or dermoscopic image and optional user text, infer the most likely disease name. If the image is not a lesion photo (e.g., poster, icon, cartoon) or is too poor-quality to assess, return “Not applicable”. Use only visual evidence and the user text; do not invent details. SYSTEM INSTRUCTION: think silently if needed."
             prompt_text = (
                     '''
-                **Instruction (system)**
-                You are a dermatology vision–language assistant. Given one clinical or dermoscopic image and optional user text, infer the most likely disease name. If the image is not a lesion photo (e.g., poster, icon, cartoon) or is too poor-quality to assess, return “Not applicable”. Use only visual evidence and the user text; do not invent details.
-    
                 **image or clinical description**
                 '''
                     + description +
@@ -123,7 +124,7 @@ class Derm1m(BaseDataset):
                 **Task (user)**
                 Answer the question: “What is the name of the disease shown in the image?”
     
-                Return a single word or short phrase for the primary answer, and provide top-3 possible diseases with probabilities. Answer in English.
+                Return a single word or short phrase for the primary answer. Answer in English.
     
                 **Output rules**
                 1. Output strict JSON only, no extra text.
@@ -140,8 +141,8 @@ class Derm1m(BaseDataset):
 
         primary_img_path = os.path.join("/home/william/dataset/skin/Derm1M", sample["image"])
         image = Image.open(primary_img_path).convert("RGB")
-        messages = {"prompt": prompt_text, "image": image}
-        print(f"prompt_text{prompt_text}")
+        messages = {"system": systemMes,"prompt": prompt_text, "image": image}
+        # print(f"prompt_text{prompt_text}")
         sample["messages"] = messages
         del sample["image"]
         sample["image_path"] = primary_img_path
@@ -228,20 +229,23 @@ class Derm1m(BaseDataset):
             elif question_type == "close_end_QA":
                 metrics["open"]["total"] += 1
                 correct = judge_close_end_vqa_json(answer, response)
-                data = json.loads(response)
-                response = data["answer"]
-                c_metrics = judge_open_end_vqa(answer, response)
+
+                # try:
+                #     data = parse_json_response(response)
+                #     response = str(data.get("answer", "")).strip()
+                # except Exception:
+                #     # Fallback: try to extract answer field by regex, or mark empty
+                #     m = re.search(r'"answer"\s*:\s*"([^"]+)"', response, flags=re.IGNORECASE)
+                #     response = m.group(1).strip() if m else ""
+
+                # c_metrics = judge_open_end_vqa(answer, response)
                 out_samples[i]["correct"] = correct
-                out_samples[i]["metrics"] = c_metrics
+                # out_samples[i]["metrics"] = c_metrics
                 if correct:
                     metrics["total metrics"]["right"] += 1
                     metrics["open"]["right"] += 1
-                for metric in c_metrics:
-                    metrics["open"][metric] += c_metrics[metric]
-                # if os.environ.get("use_llm_judge", "False") == "True":
-                #     messages = get_compare_messages(question, response, answer)
-                #     messages_list.append(messages)
-                #     open_id.append(i)
+                # for metric in c_metrics:
+                #     metrics["open"][metric] += c_metrics[metric]
 
         if os.environ.get("use_llm_judge", "False") == "True":
             metrics["total metrics"]["right"] = 0
