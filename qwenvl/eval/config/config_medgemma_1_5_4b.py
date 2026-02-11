@@ -9,7 +9,7 @@ today_str  = datetime.now().strftime("%Y%m%d_%H%M%S")
 DATASET_NAME ="MMSkinQA_SKINgpt"
 # DATASET_NAME ="SkinCAP"
 RAG_FLAG="False"
-PROJECT_ROOT = "/home/william/model/Skinalor/RAG/RAGDataSet"
+PROJECT_ROOT = "/root/model/Skinalor/RAG/RAGDataSet"
 DB_DIR = os.path.join(PROJECT_ROOT, DATASET_NAME)
 CHROMA_PERSIST_PATH = os.path.join(DB_DIR, "chroma_db_skin")
 CHROMA_COLLECTION_NAME = r"skin_cases_multivector_"+DATASET_NAME
@@ -18,7 +18,7 @@ CHROMA_COLLECTION_NAME = r"skin_cases_multivector_"+DATASET_NAME
 # RAG_FLAG="True"
 # # DATASET_NAME ="SkinCAP"
 # DATASET_NAME ="MMSkinQA_SKINgpt"
-# PROJECT_ROOT = "/home/william/model/Skinalor/RAG/RAGDataSet"
+# PROJECT_ROOT = "/root/model/Skinalor/RAG/RAGDataSet"
 # DB_DIR = os.path.join(PROJECT_ROOT, DATASET_NAME)
 # CHROMA_PERSIST_PATH = os.path.join(DB_DIR, "chroma_db_skin")
 # CHROMA_COLLECTION_NAME = "skin_cases_multivector"+DATASET_NAME
@@ -34,20 +34,20 @@ EVAL_DATASETS = "Derm1m"
 
 
 EVAL_LOCAL_DATASETS_FLAG ="True"
-# EVAL_LOCAL_DATASETS_FILE ="/home/william/dataset/skin/SkinCAP/SkinCAP_20250712_121252.json,/home/william/dataset/skin/SkinCAP/SkinCAP_20250712_013256.json,/home/william/dataset/skin/SKINgpt/20250711055029_SKINgpt_multiple_choice_QA.json,/home/william/dataset/skin/MM-SkinQA/MM-SkinQA_20250711213519.json"
-# EVAL_LOCAL_DATASETS_FILE ="/home/william/dataset/skin/SKINgpt/20250717055029_SKINgpt_close_end_QA.json"
-# EVAL_LOCAL_DATASETS_FILE ="/home/william/dataset/skin/SkinCAP/SkinCAP_20250712_121252.json"
-# EVAL_LOCAL_DATASETS_FILE ="/home/william/dataset/skin/SkinCAP/SkinCAP_20250717_201435_multiple_choice_QA.json"
-EVAL_LOCAL_DATASETS_FILE="/home/william/dataset/skin/Derm1M/eval_Derm1M_train_json_1k.jsonl"
+# EVAL_LOCAL_DATASETS_FILE ="/root/dataset/skin/SkinCAP/SkinCAP_20250712_121252.json,/root/dataset/skin/SkinCAP/SkinCAP_20250712_013256.json,/root/dataset/skin/SKINgpt/20250711055029_SKINgpt_multiple_choice_QA.json,/root/dataset/skin/MM-SkinQA/MM-SkinQA_20250711213519.json"
+# EVAL_LOCAL_DATASETS_FILE ="/root/dataset/skin/SKINgpt/20250717055029_SKINgpt_close_end_QA.json"
+# EVAL_LOCAL_DATASETS_FILE ="/root/dataset/skin/SkinCAP/SkinCAP_20250712_121252.json"
+# EVAL_LOCAL_DATASETS_FILE ="/root/dataset/skin/SkinCAP/SkinCAP_20250717_201435_multiple_choice_QA.json"
+EVAL_LOCAL_DATASETS_FILE="/root/dataset/skin/Derm1M/eval_Derm1M_train_json_1k.jsonl"
 
 
-# EVAL_DATASET_PATH = "/home/william/dataset/skin/SKINgpt"
+# EVAL_DATASET_PATH = "/root/dataset/skin/SKINgpt"
 OUTPUT_PATH = f"eval_results/medgemma-1.5-4b-it/{today_str}"
 
 # VLM model path
-MODEL_PATH = "/home/william/model/medgemma-1.5-4b-it"
+MODEL_PATH = "/root/model/medgemma-1.5-4b-it"
 MODEL_NAME = "MedGemma"
-# ADAPTER_PATH = "/home/william/model/Lingshu-7B-Finetuning/qwenvl/scripts/output"
+# ADAPTER_PATH = "/root/model/Lingshu-7B-Finetuning/qwenvl/scripts/output"
 ADAPTER_PATH = None
 
 

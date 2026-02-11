@@ -2,29 +2,30 @@ from platform import system
 
 from ..utils.base_dataset import BaseDataset
 
-
 from datasets import Dataset
 from tqdm import tqdm
 import os
 import json
 from PIL import Image
 from mathruler.grader import extract_boxed_content
-from ..utils.utils import parse_json_response,save_json,extract,judger,get_compare_messages,judge_open_end_vqa,judge_judgement,judge_judgement_close_options,judge_close_end_vqa,judge_close_end_vqa_json
+from ..utils.utils import parse_json_response, save_json, extract, judger, get_compare_messages, judge_open_end_vqa, \
+    judge_judgement, judge_judgement_close_options, judge_close_end_vqa, judge_close_end_vqa_json
 from distutils.util import strtobool
 import re
 
+
 class Derm1m(BaseDataset):
-    def __init__(self,idx,model,dataset_path,output_path):
+    def __init__(self, idx, model, dataset_path, output_path):
         self.model = model
         self.idx = idx
         self.output_path = output_path
         self.dataset_path = dataset_path if dataset_path else "redlessone/Derm1M"
         self.samples = []
-        self.chunk_idx = int(os.environ.get("chunk_idx",0))
-        self.num_chunks = int(os.environ.get("num_chunks",1))
-        self.eval_local_datasets_flag = bool(strtobool(os.environ.get("eval_local_datasets_flag",True)))
-        self.eval_local_datasets_file = str(os.environ.get("eval_local_datasets_file", "/root/dataset/skin/Derm1M/Derm1M_train.jsonl"))
-
+        self.chunk_idx = int(os.environ.get("chunk_idx", 0))
+        self.num_chunks = int(os.environ.get("num_chunks", 1))
+        self.eval_local_datasets_flag = bool(strtobool(os.environ.get("eval_local_datasets_flag", True)))
+        self.eval_local_datasets_file = str(
+            os.environ.get("eval_local_datasets_file", "/root/dataset/skin/Derm1M/Derm1M_train.jsonl"))
 
     def load_data(self):
         # load local evaldatasets
@@ -39,13 +40,13 @@ class Derm1m(BaseDataset):
             train_ds = Dataset.from_list(records)
             dataset = train_ds.select(range(30))
             # dataset = train_ds
-            for idx,sample in tqdm(enumerate(dataset)):
+            for idx, sample in tqdm(enumerate(dataset)):
                 if idx % self.num_chunks == self.chunk_idx:
                     sample = self.construct_multi_image_rag_prompt(sample)
                     self.samples.append(sample)
             return self.samples
 
-    def construct_multi_image_rag_prompt(self,sample):
+    def construct_multi_image_rag_prompt(self, sample):
         # prompt_text = """You are a board‐certified dermatology AI specialist. A patient has just uploaded an image of a skin lesion. Carefully examine the lesion’s visual features—color, shape, borders, surface texture, and anatomic location—and then compose a single, fully descriptive diagnostic sentence in English. Mirror the expert style by:
         # 1. Opening with a concise description of the key visual finding (e.g. “The red, smooth, exophytic nodule with a slightly narrowed base…”).
         # 2. Stating the most likely diagnosis (e.g. “…may indicate squamous cell carcinoma.”).
@@ -63,28 +64,28 @@ class Derm1m(BaseDataset):
         #     if conv["from"] == "gpt":
         #         description = conv["value"]
         #         break
-        if sample["question_type"]=="close_end_QA_equels":
+        if sample["question_type"] == "close_end_QA_equels":
             prompt_text = (
                     '''
                 **Instruction (system)**
                 You are a dermatology vision–language assistant. Given one clinical or dermoscopic image and optional user text, infer the most likely disease name. If the image is not a lesion photo (e.g., poster, icon, cartoon) or is too poor-quality to assess, return “Not applicable”. Use only visual evidence and the user text; do not invent details.
-    
+
                 **image or clinical description**
                 '''
                     + description +
                     '''
                 **Task (user)**
                 Answer the question: “What is the name of the disease shown in the image?”
-    
+
                 Return a single word or short phrase for the primary answer, and provide top-3 possible diseases with probabilities. Answer in English.
-    
+
                 **Output rules**
                 1. Output strict JSON only, no extra text.
                 2. `answer` must be one word or a short phrase.
                 3. `top3` has exactly 3 items, each item includes fields `disease`, `prob`, and `reason`; the list is sorted by `prob` (0–1) in descending order, and the three `prob` values sum to 1.0 (±0.01). The `reason` is a concise morphological justification (e.g., region, color/shape/border/texture, elevation, perilesional skin).
                 4. If the image is not a real lesion or is unreadable, set `answer` to "Not applicable" and return an empty array for `top3`.
                 5. Keep reasoning concise and purely morphological (region, color/shape/border/texture, elevation, perilesional skin). No treatment advice.
-    
+
                 **JSON schema**
                 {
                   "answer": "<single word or short phrase>",
@@ -114,7 +115,7 @@ class Derm1m(BaseDataset):
                 '''
             )
         elif sample["question_type"] == "close_end_QA":
-            systemMes="You are a dermatology vision–language assistant. Given one clinical or dermoscopic image and optional user text, infer the most likely disease name. If the image is not a lesion photo (e.g., poster, icon, cartoon) or is too poor-quality to assess, return “Not applicable”. Use only visual evidence and the user text; do not invent details. SYSTEM INSTRUCTION: think silently if needed."
+            systemMes = "You are a dermatology vision–language assistant. Given one clinical or dermoscopic image and optional user text, infer the most likely disease name. If the image is not a lesion photo (e.g., poster, icon, cartoon) or is too poor-quality to assess, return “Not applicable”. Use only visual evidence and the user text; do not invent details. SYSTEM INSTRUCTION: think silently if needed."
             prompt_text = (
                     '''
                 **image or clinical description**
@@ -123,43 +124,32 @@ class Derm1m(BaseDataset):
                     '''
                 **Task (user)**
                 Answer the question: “What is the name of the disease shown in the image?”
-    
+
                 Return a single word or short phrase for the primary answer. Answer in English.
-    
+
                 **Output rules**
                 1. Output strict JSON only, no extra text.
                 2. `answer` must be one word or a short phrase.
                 3. If the image is not a real lesion or is unreadable, set `answer` to "Not applicable".
 
-    
+
                 **JSON schema**
                 {
                   "answer": "<single word or short phrase>"
                 }
                 '''
             )
-            prompt = [
-                {"role": "system", "content": [{"type": "text", "text": SYSTEM}]},
-                {
-                    "role": "user",
-                    "content": [
-                        {"type": "image", "image": ex["image_path"]},
-                        {"type": "text", "text": USER_TEMPLATE.format(q=q)},
-                    ],
-                },
-            ]
 
         primary_img_path = os.path.join("/root/dataset/skin/Derm1M", sample["image"])
         image = Image.open(primary_img_path).convert("RGB")
-        messages = {"system": systemMes,"prompt": prompt_text, "image": image}
+        messages = {"system": systemMes, "prompt": prompt_text, "image": image}
         # print(f"prompt_text{prompt_text}")
         sample["messages"] = messages
         del sample["image"]
         sample["image_path"] = primary_img_path
         return sample
 
-
-    def cal_metrics(self,out_samples):
+    def cal_metrics(self, out_samples):
         messages_list = []
 
         metrics = {
@@ -177,8 +167,8 @@ class Derm1m(BaseDataset):
                 "rouge1": 0,
                 "rouge2": 0,
                 "rougel": 0,
-                "Meteor" : 0,
-                "BertScore" : 0,
+                "Meteor": 0,
+                "BertScore": 0,
                 "precision": 0,
                 "recall": 0,
                 "f1": 0,
@@ -211,7 +201,7 @@ class Derm1m(BaseDataset):
             response = response.lower().strip()
 
             metrics["total metrics"]["total"] += 1
-            if question_type =="multiple_choice_QA":
+            if question_type == "multiple_choice_QA":
                 metrics["close"]["total"] += 1
                 correct = judge_judgement_close_options(answer, response)
                 out_samples[i]["correct"] = correct
@@ -273,7 +263,7 @@ class Derm1m(BaseDataset):
 
         total_total = metrics["total metrics"]["total"]
         if total_total > 0:
-           metrics["total metrics"]["acc"] = metrics["total metrics"]["right"] / total_total
+            metrics["total metrics"]["acc"] = metrics["total metrics"]["right"] / total_total
         else:
             metrics["total metrics"]["acc"] = 0.0
 
@@ -300,7 +290,6 @@ class Derm1m(BaseDataset):
         total_time = float(os.environ.get("total_time"))
         total_samples = metrics["total metrics"]["total"]
         avg_time = total_time / total_samples if total_samples > 0 else 0.0
-
 
         metrics["total_time_s"] = total_time
         metrics["avg_time_per_sample_s"] = avg_time
