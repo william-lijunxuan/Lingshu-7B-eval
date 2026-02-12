@@ -15,6 +15,22 @@ class Tee:
     def flush(self):
         for s in self.streams:
             s.flush()
+    def isatty(self):
+        for s in self.streams:
+            try:
+                if s.isatty():
+                    return True
+            except Exception:
+                pass
+        return False
+
+    def fileno(self):
+        for s in self.streams:
+            try:
+                return s.fileno()
+            except Exception:
+                continue
+        raise OSError("No underlying stream has fileno()")
 
 class Logger:
     def __init__(self, model_name:str,save_file_path: str = None):

@@ -21,6 +21,16 @@ class MedGemma:
         self.top_p = args.top_p
         self.repetition_penalty = args.repetition_penalty
         self.max_new_tokens = args.max_new_tokens
+        self.adapter_path = getattr(args, "adapter_path", None)
+        print(f"adapter_path:{self.adapter_path}")
+        if self.adapter_path is not None and not (isinstance(self.adapter_path, str) and self.adapter_path.strip().lower() in {"none", "null", ""}):
+            from peft import PeftModel
+            self.llm = PeftModel.from_pretrained(self.llm, self.adapter_path)
+            print("----------------------Use GRPO weights---------------------------")
+            # merged_model = model.merge_and_unload()
+            self.llm.eval()
+            print(type(self.llm))
+            print(self.llm.peft_config.keys())
 
     def process_messages(self,messages):
         current_messages = []

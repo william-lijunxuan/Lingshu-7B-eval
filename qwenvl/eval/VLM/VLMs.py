@@ -35,7 +35,7 @@ class LingShu:
 @VLMRegistry.register("MedGemma")
 class MedGemma:
     def __new__(cls, model_path: str, args: Any) -> Any:
-        from Medgemma.MedGemma import MedGemma
+        from .Medgemma.MedGemma import MedGemma
         return MedGemma(model_path, args)
 @VLMRegistry.register("Hulu_Med_7B")
 class Hulu_Med_7B:
