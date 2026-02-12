@@ -30,6 +30,7 @@ class MedGemma:
             # merged_model = model.merge_and_unload()
             self.llm.eval()
             print(type(self.llm))
+            print(self.llm.peft_config.keys())
 
     def process_messages(self,messages):
         current_messages = []
