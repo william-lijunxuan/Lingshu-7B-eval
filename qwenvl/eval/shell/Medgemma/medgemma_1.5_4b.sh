@@ -39,7 +39,7 @@ ADAPTER_PATH=None
 
 # vllm settings
 CUDA_VISIBLE_DEVICES="0,1"
-TENSOR_PARALLEL_SIZE="2"
+TENSOR_PARALLEL_SIZE="1"
 USE_VLLM="True"
 
 # evaluation settings
@@ -72,7 +72,7 @@ python eval_sh.py \
   --tensor_parallel_size "$TENSOR_PARALLEL_SIZE" \
   --use_vllm "$USE_VLLM" \
   --reasoning "$REASONING" \
-  --num_chunks 1 \
+  --num_chunks 2 \
   --chunk_idx 0 \
   --max_image_num "$MAX_IMAGE_NUM" \
   --max_new_tokens "$MAX_NEW_TOKENS" \
