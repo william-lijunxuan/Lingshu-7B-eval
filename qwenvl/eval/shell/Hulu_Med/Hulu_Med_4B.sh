@@ -30,12 +30,10 @@ OUTPUT_PATH="eval_results/Hulu-Med-4B"
 MODEL_PATH="/root/model/Hulu-Med-4B"
 MODEL_NAME="Hulu_Med_7B"
 CONFIG_MODEL_NAME="Hulu_Med_7B"
-#ADAPTER_PATH="/root/model/Lingshu-7B-Finetuning/qwenvl/scripts/output"
-#ADAPTER_PATH="/root/model/Lingshu-7B-eval/qwenvl/eval/output"
 ADAPTER_PATH=None
 
 # vllm settings
-CUDA_VISIBLE_DEVICES="0"
+CUDA_VISIBLE_DEVICES="0,1"
 TENSOR_PARALLEL_SIZE="1"
 USE_VLLM="True"
 
@@ -43,10 +41,10 @@ USE_VLLM="True"
 SEED=42
 REASONING="False"
 TEST_TIMES=1
-MAX_NEW_TOKENS=1024
+MAX_NEW_TOKENS=128
 MAX_IMAGE_NUM=6
 TEMPERATURE=0.7
-TOP_P=0.95
+TOP_P=0.0001
 REPETITION_PENALTY=1
 
 # LLM judge settings
@@ -69,7 +67,7 @@ python eval_sh.py \
   --tensor_parallel_size "$TENSOR_PARALLEL_SIZE" \
   --use_vllm "$USE_VLLM" \
   --reasoning "$REASONING" \
-  --num_chunks 1 \
+  --num_chunks 2 \
   --chunk_idx 0 \
   --max_image_num "$MAX_IMAGE_NUM" \
   --max_new_tokens "$MAX_NEW_TOKENS" \
