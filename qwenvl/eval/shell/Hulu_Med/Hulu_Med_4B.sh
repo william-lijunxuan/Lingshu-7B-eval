@@ -34,7 +34,7 @@ ADAPTER_PATH=None
 
 # vllm settings
 CUDA_VISIBLE_DEVICES="0,1"
-TENSOR_PARALLEL_SIZE="1"
+TENSOR_PARALLEL_SIZE="2"
 USE_VLLM="True"
 
 # evaluation settings

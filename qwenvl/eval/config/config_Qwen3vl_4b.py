@@ -44,8 +44,8 @@ MODEL_NAME="Qwen3vl_8b"   # Qwen3vl_8b and Qwen3-VL-4B-Instruct use same code
 ADAPTER_PATH = None
 
 #vllm setting
-CUDA_VISIBLE_DEVICES="0"
-TENSOR_PARALLEL_SIZE="1"
+CUDA_VISIBLE_DEVICES="0,1"
+TENSOR_PARALLEL_SIZE="2"
 USE_VLLM="True"
 
 #Eval setting
