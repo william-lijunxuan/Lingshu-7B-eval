@@ -22,8 +22,8 @@ os.environ.setdefault("TF_CPP_MIN_LOG_LEVEL", "3")
 # -------------------------------
 # Configuration
 # -------------------------------
-BASE_MODEL = "/root/model/Qwen2.5-VL-7B-Instruct"  # change to local path
-ADAPTER_DIR = "/root/model/Lingshu-7B-Finetuning/qwenvl/scripts/output"  # change to local path
+BASE_MODEL = "/home/william/model/Qwen2.5-VL-7B-Instruct"  # change to local path
+ADAPTER_DIR = "/home/william/model/Lingshu-7B-Finetuning/qwenvl/scripts/output"  # change to local path
 USE_ADAPTER = True
 ATTN_IMPL_CANDIDATES = ["flash_attention_2", "sdpa"]
 

@@ -8,7 +8,7 @@ echo $today_str
 # dataset and RAG config
 DATASET_NAME="MMSkinQA_SKINgpt"
 RAG_FLAG="False"
-PROJECT_ROOT="/root/model/Skinalor/RAG/RAGDataSet"
+PROJECT_ROOT="/home/william/model/Skinalor/RAG/RAGDataSet"
 DB_DIR="${PROJECT_ROOT}/${DATASET_NAME}"
 CHROMA_PERSIST_PATH="${DB_DIR}/chroma_db_skin"
 CHROMA_COLLECTION_NAME="skin_cases_multivector_${DATASET_NAME}"
@@ -20,22 +20,22 @@ EMBEDDING_MODEL_NAME="openai/clip-vit-base-patch32"
 DATASETS_PATH="redlessone"
 EVAL_DATASETS="Derm1m"
 EVAL_LOCAL_DATASETS_FLAG="True"
-#EVAL_LOCAL_DATASETS_FILE="/root/dataset/skin/Derm1M/Derm1M_train_qwen_prompt.jsonl"
-#EVAL_LOCAL_DATASETS_FILE="/root/dataset/skin/Derm1M/Derm1M_train.jsonl"
-EVAL_LOCAL_DATASETS_FILE="/root/dataset/skin/Derm1M/eval_Derm1M_train_json_1k.jsonl"
+#EVAL_LOCAL_DATASETS_FILE="/home/william/dataset/skin/Derm1M/Derm1M_train_qwen_prompt.jsonl"
+#EVAL_LOCAL_DATASETS_FILE="/home/william/dataset/skin/Derm1M/Derm1M_train.jsonl"
+EVAL_LOCAL_DATASETS_FILE="/home/william/dataset/skin/Derm1M/eval_Derm1M_train_json_1k.jsonl"
 
 # output config
 OUTPUT_PATH="eval_results/Medgemma_1.5-4B"
 
 # VLM model config
-MODEL_PATH="/root/model/medgemma-1.5-4b-it"
+MODEL_PATH="/home/william/model/medgemma-1.5-4b-it"
 MODEL_NAME="MedGemma"
 CONFIG_MODEL_NAME="MedGemma"
-#ADAPTER_PATH="/root/model/Lingshu-7B-Finetuning/qwenvl/scripts/output"
-#ADAPTER_PATH="/root/model/Lingshu-7B-Finetuning/qwenvl/scripts/outputqwen3vl"
-#ADAPTER_PATH="/root/model/Lingshu-7B-eval/qwenvl/eval/output"
+#ADAPTER_PATH="/home/william/model/Lingshu-7B-Finetuning/qwenvl/scripts/output"
+#ADAPTER_PATH="/home/william/model/Lingshu-7B-Finetuning/qwenvl/scripts/outputqwen3vl"
+#ADAPTER_PATH="/home/william/model/Lingshu-7B-eval/qwenvl/eval/output"
 #ADAPTER_PATH=None
-ADAPTER_PATH=/root/model/GRPO_medgemma
+ADAPTER_PATH=/home/william/model/GRPO_medgemma
 
 # vllm settings
 CUDA_VISIBLE_DEVICES="0,1"

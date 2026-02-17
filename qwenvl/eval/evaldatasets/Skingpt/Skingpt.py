@@ -22,7 +22,7 @@ class Skingpt(BaseDataset):
         self.chunk_idx = int(os.environ.get("chunk_idx",0))
         self.num_chunks = int(os.environ.get("num_chunks",1))
         self.eval_local_datasets_flag = bool(strtobool(os.environ.get("eval_local_datasets_flag",True)))
-        self.eval_local_datasets_file = str(os.environ.get("eval_local_datasets_file", "/root/dataset/skin/SKINgpt/20250711055029_SKINgpt_multiple_choice_QA.json"))
+        self.eval_local_datasets_file = str(os.environ.get("eval_local_datasets_file", "/home/william/dataset/skin/SKINgpt/20250711055029_SKINgpt_multiple_choice_QA.json"))
 
 
     def load_data(self):
@@ -68,7 +68,7 @@ class Skingpt(BaseDataset):
             Please choose the correct one and respond with **only** the diagnosis text wrapped in <answer>...</answer>—do not include any option letter.\n
             For example, correct format is:\n <answer>pustular psoriasis</answer> and not <answer>D</answer> or <answer>A: pustular psoriasis</answer>.
             """
-        img_path = os.path.join("/root/dataset/skin/SKINgpt/image", sample["image_name"])
+        img_path = os.path.join("/home/william/dataset/skin/SKINgpt/image", sample["image_name"])
         image_name = sample["image_name"]
         print(f"\nimage_name:{image_name}\n")
         print(f"\nprompt_text:{prompt_text}\n")

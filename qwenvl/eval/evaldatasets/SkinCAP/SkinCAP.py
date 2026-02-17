@@ -19,7 +19,7 @@ class SkinCAP(BaseDataset):
         self.chunk_idx = int(os.environ.get("chunk_idx",0))
         self.num_chunks = int(os.environ.get("num_chunks",1))
         self.eval_local_datasets_flag = bool(strtobool(os.environ.get("eval_local_datasets_flag",True)))
-        self.eval_local_datasets_file = str(os.environ.get("eval_local_datasets_file", "/root/dataset/skin/SkinCAP/SkinCAP_20250712_013256.json"))
+        self.eval_local_datasets_file = str(os.environ.get("eval_local_datasets_file", "/home/william/dataset/skin/SkinCAP/SkinCAP_20250712_013256.json"))
 
 
     def load_data(self):
@@ -79,7 +79,7 @@ class SkinCAP(BaseDataset):
             Please choose the correct one and respond with **only** the diagnosis text wrapped in <answer>...</answer>—do not include any option letter.\n\n
             For example, correct format is:\n <answer>pustular psoriasis</answer> and not <answer>D</answer> or <answer>A: pustular psoriasis</answer>.
             """
-        primary_img_path = os.path.join("/root/dataset/skin/SkinCAP/skincap", sample["image_name"])
+        primary_img_path = os.path.join("/home/william/dataset/skin/SkinCAP/skincap", sample["image_name"])
         image = Image.open(primary_img_path).convert("RGB")
         # if bool(strtobool(os.environ.get("rag_flag", True))):
         #     chroma_persist_path = os.environ.get("chroma_persist_path")
@@ -124,7 +124,7 @@ class SkinCAP(BaseDataset):
         #                 print(f"Warning: Retrieved case {i + 1} is missing 'image_name' in metadata. Skipping.")
         #                 continue
         #
-        #             retrieved_img_path = os.path.join("/root/dataset/skin/SkinCAP/skincap", retrieved_img_name)
+        #             retrieved_img_path = os.path.join("/home/william/dataset/skin/SkinCAP/skincap", retrieved_img_name)
         #             try:
         #                 # Load the retrieved image
         #                 retrieved_image_object = Image.open(retrieved_img_path)
@@ -191,7 +191,7 @@ class SkinCAP(BaseDataset):
             """
 
 
-        img_path = os.path.join("/root/dataset/skin/SkinCAP/skincap", sample["image_name"])
+        img_path = os.path.join("/home/william/dataset/skin/SkinCAP/skincap", sample["image_name"])
         image_name = sample["image_name"]
         print(f"\nimage_name:{image_name}\n\n")
         print(f"\nprompt_text:{prompt_text}\n\n")

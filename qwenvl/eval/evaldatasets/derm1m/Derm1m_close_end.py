@@ -25,7 +25,7 @@ class Derm1m(BaseDataset):
         self.num_chunks = int(os.environ.get("num_chunks", 1))
         self.eval_local_datasets_flag = bool(strtobool(os.environ.get("eval_local_datasets_flag", True)))
         self.eval_local_datasets_file = str(
-            os.environ.get("eval_local_datasets_file", "/root/dataset/skin/Derm1M/Derm1M_train.jsonl"))
+            os.environ.get("eval_local_datasets_file", "/home/william/dataset/skin/Derm1M/Derm1M_train.jsonl"))
 
     def load_data(self):
         # load local evaldatasets
@@ -140,7 +140,7 @@ class Derm1m(BaseDataset):
                 '''
             )
 
-        primary_img_path = os.path.join("/root/dataset/skin/Derm1M", sample["image"])
+        primary_img_path = os.path.join("/home/william/dataset/skin/Derm1M", sample["image"])
         image = Image.open(primary_img_path).convert("RGB")
         messages = {"system": systemMes, "prompt": prompt_text, "image": image}
         # print(f"prompt_text{prompt_text}")

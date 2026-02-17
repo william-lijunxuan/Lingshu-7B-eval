@@ -8,8 +8,8 @@ from nltk.translate.meteor_score import meteor_score
 from bert_score.scorer import BERTScorer
 
 JSON_PATH = Path(
-    "/root/model/Lingshu-7B-eval/qwenvl/eval/eval_results/Lingshu-7B/20251123_115421/Derm1m0Baseline/results_Lingshu-7B_baseline.json"
-    # "/root/model/Lingshu-7B-eval/qwenvl/eval/eval_results/Lingshu-7B/20251123_115421/Derm1m0Baseline/results_Lingshu-7B_finetuning.json"
+    "/home/william/model/Lingshu-7B-eval/qwenvl/eval/eval_results/Lingshu-7B/20251123_115421/Derm1m0Baseline/results_Lingshu-7B_baseline.json"
+    # "/home/william/model/Lingshu-7B-eval/qwenvl/eval/eval_results/Lingshu-7B/20251123_115421/Derm1m0Baseline/results_Lingshu-7B_finetuning.json"
 )
 
 
