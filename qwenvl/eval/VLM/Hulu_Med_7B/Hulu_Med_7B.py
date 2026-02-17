@@ -103,6 +103,8 @@ class Hulu_Med_7B:
             return_tensors="pt"
         )
 
+        print(type(inputs.get("pixel_values")),None if inputs.get("pixel_values") is None else inputs["pixel_values"].shape)
+
         inputs = {k: v.to(self.model.device) if isinstance(v, torch.Tensor) else v for k, v in inputs.items()}
         if "pixel_values" in inputs and inputs["pixel_values"] is not None:
             inputs["pixel_values"] = inputs["pixel_values"].to(self.model.dtype)
