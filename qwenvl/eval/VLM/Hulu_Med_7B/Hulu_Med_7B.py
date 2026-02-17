@@ -94,7 +94,6 @@ class Hulu_Med_7B:
                 for _ in loaded_images:
                     conversation[0]["content"].append({"type": "image"})
         conversation[0]["content"].append({"type": "text", "text": prompt})
-        print(f"\ninput prompt:{conversation}\n")
         inputs = self.processor(
             images=[loaded_images] if loaded_images is not None else None,
             conversation=conversation,
@@ -102,12 +101,6 @@ class Hulu_Med_7B:
             add_generation_prompt=True,
             return_tensors="pt"
         )
-
-        for k, v in inputs.items():
-            if hasattr(v, "shape"):
-                print(k, type(v), v.shape)
-            else:
-                print(k, type(v))
 
         inputs = {k: v.to(self.model.device) if isinstance(v, torch.Tensor) else v for k, v in inputs.items()}
         if "pixel_values" in inputs and inputs["pixel_values"] is not None:
@@ -118,6 +111,7 @@ class Hulu_Med_7B:
     def generate_output(self, messages):
 
         llm_inputs = self.process_messages(messages)
+        print(f"\ninput prompt:{llm_inputs}\n")
         do_sample = True if self.temperature > 0 else False
 
         with torch.inference_mode():
