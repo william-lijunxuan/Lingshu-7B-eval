@@ -1027,11 +1027,12 @@ def _alias_map():
     """Alias → canonical string map."""
     groups = [
         # exact pairs requested
-        {"scar", "scarring", "cicatrix"},
+        {"scar", "scarring", "cicatrix", "scar condition"},
         {"melanocytic nevus", "melanocytic nevi", "nevus", "nevi", "mole", "moles", "naevus", "naevi"},
         {"epidermal cyst", "epidermoid cyst", "sebaceous cyst", "infundibular cyst"},
-        {"angioma", "hemangioma", "cherry angioma", "senile hemangioma"},
+        {"angioma", "hemangioma", "cherry angioma", "senile hemangioma", "haemangioma"},
         {"acrochordon", "skin tag", "skin tags"},
+
         # useful dermatology aliases
         {"basal cell carcinoma", "bcc"},
         {"squamous cell carcinoma", "scc"},
@@ -1039,7 +1040,7 @@ def _alias_map():
         {"actinic keratosis", "ak"},
         {"post inflammatory hyperpigmentation", "post-inflammatory hyperpigmentation", "pih"},
         {"melasma", "chloasma"},
-        {"tinea", "dermatophytosis", "ringworm"},
+        {"tinea", "tinea capitis", "dermatophytosis", "ringworm"},
         {"molluscum contagiosum", "molluscum"},
         {"urticaria", "hives"},
         {"acne vulgaris", "acne"},
@@ -1054,9 +1055,43 @@ def _alias_map():
         {"abscess"},
         {"rosacea"},
         {"viral wart", "wart", "verruca", "hpv wart"},
-        {"Behçet's syndrome", "behcets disease", "behcets","Behçet syndrome"},
-        {"hemangioma", "haemangioma"},  # safety duplicate
+        {"Behçet's syndrome", "behcets disease", "behcets", "Behçet syndrome"},
+
+        # hypertrichosis family
+        {"hypertrichosis", "localized hypertrichosis", "faun tail nevus", "faun tail"},
+
+        # amyloid / mucin
+        {"amyloidosis", "cutaneous amyloidosis"},
+        {"mucinosis", "follicular mucinosis"},
+
+        # purpura variants
+        {"pigmented progressive purpuric dermatosis", "pigmentary purpuric dermatosis", "purpura pigmentosa chronica"},
+
+        # angiofibroma variants
+        {"angiofibroma", "facial angiofibromas"},
+
+        # drug eruption variants (CSV specific)
+        {"drug eruption", "drug eruptions & reactions"},
+
+        # grover disease
+        {"grover's disease", "transient acantholytic dermatosis"},
+
+        # puppp
+        {"puppp", "pruritic urticarial papules and plaques of pregnancy"},
+
+        # lichen simplex
+        {"lichen simplex chronicus", "neurodermatitis"},
+
+        # keratoderma
+        {"keratoderma", "hyperkeratosis palmaris et plantaris"},
+
+        # wound infection descriptive leaf
+        {"local infection of wound", "abrasion, local infection of wound"},
+
+        # cafe spelling
+        {"café au lait macule", "cafe au lait macule"},
     ]
+
     alias2canon = {}
     for g in groups:
         # choose a stable canonical: first sorted normalized term

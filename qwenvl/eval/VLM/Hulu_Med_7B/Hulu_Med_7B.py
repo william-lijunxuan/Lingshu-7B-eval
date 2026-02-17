@@ -94,6 +94,7 @@ class Hulu_Med_7B:
                 for _ in loaded_images:
                     conversation[0]["content"].append({"type": "image"})
         conversation[0]["content"].append({"type": "text", "text": prompt})
+        print(f"\ninput prompt:{conversation}\n")
         inputs = self.processor(
             images=[loaded_images] if loaded_images is not None else None,
             conversation=conversation,
