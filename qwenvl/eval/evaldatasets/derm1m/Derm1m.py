@@ -56,6 +56,7 @@ class Derm1m(BaseDataset):
         #                 4. elevation: Description of the lesion or wound relative to the skin surface of the patient.
         #                 5. skin texture surrounding the lesion (e.g. coarse/thickness/atrophic/erythema/bleeding, etc)\n<image>"""
         description = sample["caption"]
+        body_location = sample["body_location"]
         # for conv in sample["conversations"]:
         #     if conv["from"] == "gpt":
         #         description = conv["value"]
@@ -72,6 +73,7 @@ class Derm1m(BaseDataset):
             **image or clinical description**
             '''
                 + description +
+            ''' **body location** '''+body_location+
                 '''
             **Task (user)**
             Answer the question: “What is the name of the disease shown in the image?”
@@ -81,8 +83,7 @@ class Derm1m(BaseDataset):
             1. Output strict JSON only, no extra text.
             2. `answer` must be one word or a short phrase.
             3. `top3` has exactly 3 items, each item includes fields `disease`, `prob`, and `reason`; the list is sorted by `prob` (0–1) in descending order, and the three `prob` values sum to 1.0 (±0.01). The `reason` is a concise morphological justification (e.g., region, color/shape/border/texture, elevation, perilesional skin).
-            4. If the image is not a real lesion or is unreadable, set `answer` to "Not applicable" and return an empty array for `top3`.
-            5. Keep reasoning concise and purely morphological (region, color/shape/border/texture, elevation, perilesional skin). No treatment advice.
+            4. Keep reasoning concise and purely morphological (region, color/shape/border/texture, elevation, perilesional skin). No treatment advice.
 
             **JSON schema**
             {
