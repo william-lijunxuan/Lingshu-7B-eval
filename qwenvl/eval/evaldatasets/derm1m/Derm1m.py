@@ -61,46 +61,57 @@ class Derm1m(BaseDataset):
         #     if conv["from"] == "gpt":
         #         description = conv["value"]
         #         break
-        systemMes = r'''
-        You are a JSON-only responder.
-
-        Do not output reasoning steps.
-        Do not include analysis, thoughts, explanations, or markdown.
-        Do not output code fences (``` or ```json) or any tags like <unused> or thought.
-
-        Output must be a single valid JSON object only:
-        - First non-whitespace character must be { and last character must be }.
-        - No extra text before or after the JSON.
-        - Use double quotes for all keys and strings.
-        - Escape any " inside strings as \" and any \ as \\.
-        - No trailing commas.
-
-        If you cannot comply, output exactly:
-        {"answer":"Not applicable","top3":[],"reason":{"region":null,"lesion_morphology":{"size_mm":null,"shape":null,"border":null,"colour":null,"surface":null},"elevation":"NA","perilesional_skin":"NA"},"quality_flags":{"non_lesion_image":true,"low_resolution_or_glare":true,"occlusion":true}}
-        '''
-
+        systemMes='''Do not output reasoning steps.
+                     Do not include analysis, thoughts, explanations, or markdown.
+                     Output valid JSON only.
+                     No code block fences.'''
         prompt_text = (
-            "You are a dermatology vision-language assistant.\n"
-            "Given ONE clinical or dermoscopic image and the user text, infer the most likely disease name.\n"
-            "If the image is not a real lesion photo or is too poor-quality, return Not applicable.\n"
-            "Use only visual evidence and the user text; do not invent details.\n\n"
-            "Clinical description:\n"
-            f"{description}\n\n"
-            f"Body location: {body_location}\n\n"
-            "Task:\n"
-            "Answer: What is the name of the disease shown in the image?\n\n"
-            "Output constraints:\n"
-            "- Output STRICT JSON only (single JSON object). No markdown. No code fences.\n"
-            "- Do NOT output a JSON array at the top level.\n"
-            "- The field top3 must contain exactly 3 items.\n"
-            "- Each top3 item must have disease (string), prob (number), reason (string).\n"
-            "- top3 probs must sum to 1.0 (+/- 0.01) and be sorted descending.\n"
-            "- Reasons must be morphological only (region, color/shape/border/texture, elevation, perilesional skin). No treatment advice.\n\n"
-            "Return exactly this JSON structure:\n"
-            '{"answer":"",'
-            '"top3":[{"disease":"","prob":0.0,"reason":""},{"disease":"","prob":0.0,"reason":""},{"disease":"","prob":0.0,"reason":""}],'
-            '"reason":{"region":null,"lesion_morphology":{"size_mm":null,"shape":null,"border":null,"colour":null,"surface":null},"elevation":"NA","perilesional_skin":"NA"},'
-            '"quality_flags":{"non_lesion_image":false,"low_resolution_or_glare":false,"occlusion":false}}'
+                '''
+            **Instruction (system)**
+            You are a dermatology vision–language assistant. Given one clinical or dermoscopic image and optional user text, infer the most likely disease name. If the image is not a lesion photo (e.g., poster, icon, cartoon) or is too poor-quality to assess, return “Not applicable”. Use only visual evidence and the user text; do not invent details.
+
+            **image or clinical description**
+            '''
+                + description +
+            ''' **body location** '''+body_location+
+                '''
+            **Task (user)**
+            Answer the question: “What is the name of the disease shown in the image?”
+            Return a single word or short phrase for the primary answer, and provide top-3 possible diseases with probabilities. Answer in English.
+
+            **Output rules**
+            1. Output strict JSON only, no extra text.
+            2. `answer` must be one word or a short phrase.
+            3. `top3` has exactly 3 items, each item includes fields `disease`, `prob`, and `reason`; the list is sorted by `prob` (0–1) in descending order, and the three `prob` values sum to 1.0 (±0.01). The `reason` is a concise morphological justification (e.g., region, color/shape/border/texture, elevation, perilesional skin).
+            4. Keep reasoning concise and purely morphological (region, color/shape/border/texture, elevation, perilesional skin). No treatment advice.
+
+            **JSON schema**
+            {
+              "answer": "<single word or short phrase>",
+              "top3": [
+                {"disease": "<name>", "prob": 0.00, "reason": "<short morphological rationale>"},
+                {"disease": "<name>", "prob": 0.00, "reason": "<short morphological rationale>"},
+                {"disease": "<name>", "prob": 0.00, "reason": "<short morphological rationale>"}
+              ],
+              "reason": {
+                "region": "<if discernible>",
+                "lesion_morphology": {
+                  "size_mm": "<if scale visible, else null>",
+                  "shape": "<round/oval/irregular>",
+                  "border": "<well-defined/ill-defined; smooth/notched>",
+                  "colour": "<uniform/variegated + hues>",
+                  "surface": "<smooth/scaly/crusted/ulcerated/verrucous>"
+                },
+                "elevation": "<flat/slightly raised/plaque/nodule/depressed/NA>",
+                "perilesional_skin": "<erythema/induration/atrophy/scale/bleeding/NA>"
+              },
+              "quality_flags": {
+                "non_lesion_image": false,
+                "low_resolution_or_glare": false,
+                "occlusion": false
+              }
+            }
+            '''
         )
 
         primary_img_path = os.path.join("/root/dataset/skin/Derm1M", sample["image"])
