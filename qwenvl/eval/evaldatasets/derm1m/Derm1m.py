@@ -60,6 +60,10 @@ class Derm1m(BaseDataset):
         #     if conv["from"] == "gpt":
         #         description = conv["value"]
         #         break
+        systemMes='''Do not output reasoning steps.
+                     Do not include analysis, thoughts, explanations, or markdown.
+                     Output valid JSON only.
+                     No code block fences.'''
         prompt_text = (
                 '''
             **Instruction (system)**
@@ -111,7 +115,8 @@ class Derm1m(BaseDataset):
 
         primary_img_path = os.path.join("/root/dataset/skin/Derm1M", sample["image"])
         image = Image.open(primary_img_path).convert("RGB")
-        messages = {"prompt": prompt_text, "image": image}
+        messages = {"system": systemMes, "prompt": prompt_text, "image": image}
+        # messages = {"prompt": prompt_text, "image": image}
         sample["messages"] = messages
         del sample["image"]
         sample["image_path"] = primary_img_path
