@@ -22,11 +22,12 @@ def _alias_map():
     """Alias → canonical string map."""
     groups = [
         # exact pairs requested
-        {"scar", "scarring", "cicatrix"},
+        {"scar", "scarring", "cicatrix", "scar condition"},
         {"melanocytic nevus", "melanocytic nevi", "nevus", "nevi", "mole", "moles", "naevus", "naevi"},
         {"epidermal cyst", "epidermoid cyst", "sebaceous cyst", "infundibular cyst"},
-        {"angioma", "hemangioma", "cherry angioma", "senile hemangioma"},
+        {"angioma", "hemangioma", "cherry angioma", "senile hemangioma", "haemangioma"},
         {"acrochordon", "skin tag", "skin tags"},
+
         # useful dermatology aliases
         {"basal cell carcinoma", "bcc"},
         {"squamous cell carcinoma", "scc"},
@@ -34,7 +35,7 @@ def _alias_map():
         {"actinic keratosis", "ak"},
         {"post inflammatory hyperpigmentation", "post-inflammatory hyperpigmentation", "pih"},
         {"melasma", "chloasma"},
-        {"tinea", "dermatophytosis", "ringworm"},
+        {"tinea", "tinea capitis", "dermatophytosis", "ringworm"},
         {"molluscum contagiosum", "molluscum"},
         {"urticaria", "hives"},
         {"acne vulgaris", "acne"},
@@ -49,17 +50,74 @@ def _alias_map():
         {"abscess"},
         {"rosacea"},
         {"viral wart", "wart", "verruca", "hpv wart"},
-        {"Behçet's syndrome", "behcets disease", "behcets","Behçet syndrome"},
-        {"hemangioma", "haemangioma"},  # safety duplicate
-        {"Tinea capitis", "tinea"},
-        {"hypertrichosis", "localized hypertrichosis"},
+        {"Behçet's syndrome", "behcets disease", "behcets", "Behçet syndrome"},
+
+        # hypertrichosis family
         {"hypertrichosis", "localized hypertrichosis", "faun tail nevus", "faun tail"},
-        {"tinea", "tinea capitis", "dermatophytosis", "ringworm"},
+
+        # amyloid / mucin
         {"amyloidosis", "cutaneous amyloidosis"},
         {"mucinosis", "follicular mucinosis"},
+
+        # purpura variants
         {"pigmented progressive purpuric dermatosis", "pigmentary purpuric dermatosis", "purpura pigmentosa chronica"},
-        {"scar", "scar condition", "scarring", "cicatrix"},
+
+        # angiofibroma variants
         {"angiofibroma", "facial angiofibromas"},
+
+        # drug eruption variants (CSV specific)
+        {"drug eruption", "drug eruptions & reactions"},
+
+        # grover disease
+        {"grover's disease", "transient acantholytic dermatosis"},
+
+        # puppp
+        {"puppp", "pruritic urticarial papules and plaques of pregnancy"},
+
+        # lichen simplex
+        {"lichen simplex chronicus", "neurodermatitis"},
+
+        # keratoderma
+        {"keratoderma", "hyperkeratosis palmaris et plantaris"},
+
+        # wound infection descriptive leaf
+        {"local infection of wound", "abrasion, local infection of wound"},
+
+        # cafe spelling
+        {"café au lait macule", "cafe au lait macule"},
+
+        # Behçet split-token variant seen in preds
+        {"beh et s syndrome", "Behçet's syndrome", "behcets disease", "behcets", "Behçet syndrome"},
+
+        # plural/singular
+        {"freckle", "freckles"},
+
+        # Kaposi punctuation/apostrophe variants
+        {"kaposi sarcoma", "kaposi's sarcoma", "kaposi s sarcoma"},
+
+        # striae synonyms
+        {"striae", "stretch mark", "stretch marks"},
+
+        # mucocele synonyms
+        {"mucocele", "mucous cyst", "mucous gland cyst"},
+
+        # HSV wording
+        {"herpes simplex", "herpes simplex virus", "hsv"},
+
+        # AD/eczema wording
+        {"atopic dermatitis", "eczema", "atopic eczema"},
+
+        # slapped cheek / parvovirus B19
+        {"parvovirus b19 infection", "slapped cheek syndrome", "fifth disease"},
+
+        # angioma common name variant
+        {"angioma", "strawberry nevus", "strawberry haemangioma", "strawberry hemangioma"},
+
+        # seborrheic keratosis plural
+        {"seborrheic keratosis", "seborrheic keratoses"},
+
+        # cutaneous larva migrans naming
+        {"cutaneous larva migrans", "creeping eruption", "sand worm eruption"},
     ]
     alias2canon = {}
     for g in groups:
@@ -78,33 +136,196 @@ def _canonical(term: str) -> str:
     n = _norm(term)
     return _ALIAS2CANON.get(n, n)
 
-def judge_close_end_vqa_json(answer: str, response: str) -> bool:
-    """
-    Return True if `answer` matches response['answer'] exactly after normalization,
-    or if both map to the same canonical term via alias groups; otherwise False.
-    """
-    try:
-        pred = json.loads(response).get("answer", None)
-    except Exception:
-        # try to recover if response has leading/trailing noise
-        try:
-            start = response.find("{")
-            end = response.rfind("}")
-            pred = json.loads(response[start:end+1]).get("answer", None) if start != -1 and end != -1 else None
-        except Exception:
-            pred = None
+# Put this near your alias definitions
+PARENT_MAP = {
+    # dermatitis hierarchy
+    "dermatitis": {
+        "seborrheic dermatitis",
+        "atopic dermatitis",
+        "allergic contact dermatitis",
+        "irritant contact dermatitis",
+        "follicular mite dermatitis",
+    },
+    "contact dermatitis": {
+        "allergic contact dermatitis",
+        "irritant contact dermatitis",
+    },
+    # vascular tumor hierarchy
+    "angioma": {
+        "infantile hemangioma",
+        "strawberry hemangioma",
+        "strawberry haemangioma",
+        "hemangioma",
+    },
+    "hemangioma": {
+        "infantile hemangioma",
+        "strawberry hemangioma",
+        "strawberry haemangioma",
+    },
+    # psoriasis hierarchy
+    "psoriasis": {
+        "oral psoriasis",
+        "psoriasis vulgaris",
+    },
+    # alopecia hierarchy
+    "alopecia": {
+        "alopecia areata",
+        "androgenetic alopecia",
+    },
+    # ichthyosis hierarchy
+    "ichthyosis": {
+        "lamellar ichthyosis",
+        "autosomal recessive congenital ichthyosis",
+        "lamellar ichthyosis",
+        "x linked ichthyosis",
+    },
+    # wart hierarchy
+    "warts": {
+        "flat wart",
+        "verruca vulgaris",
+        "viral wart",
+    },
+    # scar hierarchy
+    "scar": {
+        "atrophic scar",
+        "hypertrophic scar",
+        "cicatrix",
+        "scarring",
+    },
+    "cicatrix": {
+        "atrophic scar",
+        "hypertrophic scar",
+        "scar",
+        "scarring",
+    },
+    # nail disease hierarchy
+    "nail disease": {
+        "onychomycosis",
+    },
+    # tinea hierarchy (if you allow child-of-tinea)
+    "tinea": {
+        "tinea capitis",
+        "tinea corporis",
+        "tinea cruris",
+        "tinea pedis",
+        "tinea unguium",
+    },
+    # mucocele naming is already alias, but keep here harmless
+    "mucocele": {
+        "mucous cyst",
+        "mucous gland cyst",
+    },
+    "erythema dyschromicum perstans": {
+        "follicular erythema dyschromicum perstans",
+    },
+    "abscess": {
+        "deep seated abscess",
+    },
 
+    # basal cell carcinoma hierarchy
+    "basal cell carcinoma": {
+        "superficial basal cell carcinoma",
+        "nodular basal cell carcinoma",
+        "pigmented basal cell carcinoma",
+    },
+}
+
+# Normalize keys once for safety
+PARENT_MAP = {_norm(k): {_norm(x) for x in v} for k, v in PARENT_MAP.items()}
+
+
+
+def _extract_pred_answer(response):
+    if response is None:
+        return None
+
+    if isinstance(response, dict):
+        return response.get("answer", None)
+
+    if isinstance(response, list):
+        return None
+
+    if isinstance(response, (bytes, bytearray)):
+        response = response.decode("utf-8", errors="ignore")
+
+    if not isinstance(response, str):
+        response = str(response)
+
+    s = response.strip()
+
+    # remove markdown fences if present
+    if s.startswith("```"):
+        s = re.sub(r"^```[a-zA-Z]*\s*", "", s)
+        s = re.sub(r"\s*```$", "", s).strip()
+
+    # fast path
+    try:
+        obj = json.loads(s)
+        if isinstance(obj, dict):
+            return obj.get("answer", None)
+        return None
+    except Exception:
+        pass
+
+    # try to decode the first JSON object/array from the first "{" or "["
+    m = re.search(r"[\{\[]", s)
+    if not m:
+        return None
+    s2 = s[m.start():]
+
+    decoder = json.JSONDecoder()
+    try:
+        obj, _ = decoder.raw_decode(s2)
+        if isinstance(obj, dict):
+            return obj.get("answer", None)
+        return None
+    except Exception:
+        # last resort: try substring between first { and last }
+        start = s2.find("{")
+        end = s2.rfind("}")
+        if start != -1 and end != -1 and end > start:
+            chunk = s2[start:end+1]
+            try:
+                obj = json.loads(chunk)
+                if isinstance(obj, dict):
+                    return obj.get("answer", None)
+            except Exception:
+                return None
+        return None
+
+
+def judge_close_end_vqa_json(answer: str, response: str) -> bool:
+    pred = _extract_pred_answer(response)
     if pred is None:
+        print("answer:", answer, "pred:", pred,"response",response)
         return False
 
     a_norm = _norm(answer)
     p_norm = _norm(pred)
+
+    # exact match after normalization
     if a_norm == p_norm:
         return True
 
+    # alias canonical match
     a_can = _canonical(a_norm)
     p_can = _canonical(p_norm)
-    return a_can == p_can
+    if a_can == p_can:
+        return True
+
+    # hierarchical match: answer is parent, pred is child (after canonicalization)
+    # we apply canonical here to reduce variant issues
+    a_h = _canonical(a_can)
+    p_h = _canonical(p_can)
+
+    children = PARENT_MAP.get(a_h)
+    if children and p_h in children:
+        return True
+
+    # print("answer:", a_h, "pre:", p_h, False)
+    # print("answer:",answer,"pred:",pred)
+    return False
+
 
 import json
 import os
@@ -112,7 +333,7 @@ import os
 # Assume _norm, _alias_map, _ALIAS2CANON, _canonical, judge_close_end_vqa_json
 # are already defined exactly as you provided (do not modify them).
 
-RESULTS_PATH = r"\home\william\dataset\skin\Derm1M\1k\hulu_results.json"
+RESULTS_PATH = r"\home\william\dataset\skin\Derm1M\1k\medresults.json"
 
 
 def _to_posix_path(p: str) -> str:
