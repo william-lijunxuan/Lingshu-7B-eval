@@ -8,7 +8,7 @@ echo $today_str
 # dataset and RAG config
 DATASET_NAME="MMSkinQA_SKINgpt"
 RAG_FLAG="False"
-PROJECT_ROOT="/mnt/d/skinalor/model/Skinalor/RAG/RAGDataSet"
+PROJECT_ROOT="/root/model/Skinalor/RAG/RAGDataSet"
 DB_DIR="${PROJECT_ROOT}/${DATASET_NAME}"
 CHROMA_PERSIST_PATH="${DB_DIR}/chroma_db_skin"
 CHROMA_COLLECTION_NAME="skin_cases_multivector_${DATASET_NAME}"
@@ -20,18 +20,18 @@ EMBEDDING_MODEL_NAME="openai/clip-vit-base-patch32"
 DATASETS_PATH="redlessone"
 EVAL_DATASETS="Derm1m"
 EVAL_LOCAL_DATASETS_FLAG="True"
-#EVAL_LOCAL_DATASETS_FILE="/mnt/d/skinalor/dataset/skin/Derm1M/Derm1M_train_qwen_prompt.jsonl"
-EVAL_LOCAL_DATASETS_FILE="/mnt/d/skinalor/dataset/skin/Derm1M/eval_Derm1M_train_json_1k.jsonl"
+#EVAL_LOCAL_DATASETS_FILE="/root/dataset/skin/Derm1M/Derm1M_train_qwen_prompt.jsonl"
+EVAL_LOCAL_DATASETS_FILE="/root/dataset/skin/Derm1M/eval_Derm1M_train_json_1k.jsonl"
 
 # output config
-OUTPUT_PATH="eval_results/Hulu-Med-4B"
+OUTPUT_PATH="eval_results/Qwen3-VL-4B-Instruct"
 
 # VLM model config
-MODEL_PATH="/mnt/d/skinalor/model/Hulu-Med-4B"
-MODEL_NAME="Hulu_Med_7B"
-CONFIG_MODEL_NAME="Hulu_Med_7B"
-#ADAPTER_PATH="/mnt/d/skinalor/model/Lingshu-7B-Finetuning/qwenvl/scripts/output"
-#ADAPTER_PATH="/mnt/d/skinalor/model/Lingshu-7B-eval/qwenvl/eval/output"
+MODEL_PATH="/root/model/Qwen3-VL-4B-Instruct"
+MODEL_NAME="Qwen3vl_8b" # Qwen3vl_8b and Qwen3-VL-4B-Instruct use same code
+CONFIG_MODEL_NAME="Qwen3vl_4b"
+#ADAPTER_PATH="/root/model/Lingshu-7B-Finetuning/qwenvl/scripts/output"
+#ADAPTER_PATH="/root/model/Lingshu-7B-eval/qwenvl/eval/output"
 ADAPTER_PATH=None
 
 # vllm settings
@@ -43,8 +43,8 @@ USE_VLLM="True"
 SEED=42
 REASONING="False"
 TEST_TIMES=1
-MAX_NEW_TOKENS=1024
-MAX_IMAGE_NUM=1
+MAX_NEW_TOKENS=128
+MAX_IMAGE_NUM=6
 TEMPERATURE=0.7
 TOP_P=0.0001
 REPETITION_PENALTY=1
@@ -69,7 +69,7 @@ python eval_sh.py \
   --tensor_parallel_size "$TENSOR_PARALLEL_SIZE" \
   --use_vllm "$USE_VLLM" \
   --reasoning "$REASONING" \
-  --num_chunks 2 \
+  --num_chunks 1 \
   --chunk_idx 0 \
   --max_image_num "$MAX_IMAGE_NUM" \
   --max_new_tokens "$MAX_NEW_TOKENS" \

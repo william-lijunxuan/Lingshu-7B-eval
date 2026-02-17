@@ -6,7 +6,7 @@ today_str  = datetime.now().strftime("%Y%m%d_%H%M%S")
 # RAG config --MMSkinQA
 # RAG_FLAG="True"
 # DATASET_NAME ="MMSkinQA"
-# PROJECT_ROOT = "/mnt/d/skinalor/model/Skinalor/RAG/RAGDataSet"
+# PROJECT_ROOT = "/root/model/Skinalor/RAG/RAGDataSet"
 # DB_DIR = os.path.join(PROJECT_ROOT, DATASET_NAME)
 # CHROMA_PERSIST_PATH = os.path.join(DB_DIR, "chroma_db_skin")
 # CHROMA_COLLECTION_NAME = r"skin_cases_multivector_"+DATASET_NAME
@@ -15,7 +15,7 @@ today_str  = datetime.now().strftime("%Y%m%d_%H%M%S")
 # RAG_FLAG="True"
 RAG_FLAG="False"
 DATASET_NAME ="Derm1m"
-PROJECT_ROOT = "/mnt/d/skinalor/model/Skinalor/RAG/RAGDataSet"
+PROJECT_ROOT = "/root/model/Skinalor/RAG/RAGDataSet"
 DB_DIR = os.path.join(PROJECT_ROOT, DATASET_NAME)
 CHROMA_PERSIST_PATH = os.path.join(DB_DIR, "chroma_db_skin")
 CHROMA_COLLECTION_NAME = "skin_cases_multivector"+DATASET_NAME
@@ -30,17 +30,17 @@ EVAL_DATASETS = "Derm1m"
 
 
 EVAL_LOCAL_DATASETS_FLAG ="True"
-# EVAL_LOCAL_DATASETS_FILE ="/mnt/d/skinalor/dataset/skin/SkinCAP/SkinCAP_20250712_121252.json,/mnt/d/skinalor/dataset/skin/SkinCAP/SkinCAP_20250712_013256.json,/mnt/d/skinalor/dataset/skin/SKINgpt/20250711055029_SKINgpt_multiple_choice_QA.json,/mnt/d/skinalor/dataset/skin/MM-SkinQA/MM-SkinQA_20250711213519.json"
-# EVAL_LOCAL_DATASETS_FILE ="/mnt/d/skinalor/dataset/skin/SKINgpt/20250711055029_SKINgpt_multiple_choice_QA.json,/mnt/d/skinalor/dataset/skin/MM-SkinQA/MM-SkinQA_20250711213519.json"
-EVAL_LOCAL_DATASETS_FILE ="/mnt/d/skinalor/dataset/skin/Derm1M/Derm1M_train.jsonl"
-# EVAL_LOCAL_DATASETS_FILE ="/mnt/d/skinalor/dataset/skin/Derm1M/Derm1M_train_qwen_prompt.jsonl"
+# EVAL_LOCAL_DATASETS_FILE ="/root/dataset/skin/SkinCAP/SkinCAP_20250712_121252.json,/root/dataset/skin/SkinCAP/SkinCAP_20250712_013256.json,/root/dataset/skin/SKINgpt/20250711055029_SKINgpt_multiple_choice_QA.json,/root/dataset/skin/MM-SkinQA/MM-SkinQA_20250711213519.json"
+# EVAL_LOCAL_DATASETS_FILE ="/root/dataset/skin/SKINgpt/20250711055029_SKINgpt_multiple_choice_QA.json,/root/dataset/skin/MM-SkinQA/MM-SkinQA_20250711213519.json"
+EVAL_LOCAL_DATASETS_FILE ="/root/dataset/skin/Derm1M/eval_Derm1M_train_json_1k.jsonl"
+# EVAL_LOCAL_DATASETS_FILE ="/root/dataset/skin/Derm1M/Derm1M_train_qwen_prompt.jsonl"
 
-EVAL_DATASET_PATH = "/mnt/d/skinalor/dataset/skin/Derm1M"
-OUTPUT_PATH = f"eval_results/Qwen3-VL-8B-Thinking/{today_str}"
+EVAL_DATASET_PATH = "/root/dataset/skin/Derm1M"
+OUTPUT_PATH = f"eval_results/Qwen3-VL-4B-Instruct/{today_str}"
 # VLM model path
-MODEL_PATH = "/mnt/d/skinalor/model/Qwen3-VL-8B-Thinking"
-MODEL_NAME="Qwen3vl_8b"
-# ADAPTER_PATH = "/mnt/d/skinalor/model/Lingshu-7B-Finetuning/qwenvl/scripts/output"
+MODEL_PATH = "/root/model/Qwen3-VL-4B-Instruct"
+MODEL_NAME="Qwen3vl_8b"   # Qwen3vl_8b and Qwen3-VL-4B-Instruct use same code
+# ADAPTER_PATH = "/root/model/Lingshu-7B-Finetuning/qwenvl/scripts/output"
 ADAPTER_PATH = None
 
 #vllm setting
@@ -85,7 +85,7 @@ OPENAI_API_KEY=""
 
 
 
-# PROJECT_ROOT = "/mnt/d/skinalor/model/Skinalor/RAG"
+# PROJECT_ROOT = "/root/model/Skinalor/RAG"
 # DB_DIR = os.path.join(PROJECT_ROOT, "db")
 # CHROMA_PERSIST_PATH = os.path.join(DB_DIR, "chroma_db_skin")
 # CHROMA_COLLECTION_NAME = "skin_cases_multivector"

@@ -46,7 +46,7 @@ USE_VLLM="True"
 SEED=42
 REASONING="False"
 TEST_TIMES=1
-MAX_NEW_TOKENS=128
+MAX_NEW_TOKENS=512
 MAX_IMAGE_NUM=6
 TEMPERATURE=0.7
 TOP_P=0.0001
@@ -72,7 +72,7 @@ python eval_sh.py \
   --tensor_parallel_size "$TENSOR_PARALLEL_SIZE" \
   --use_vllm "$USE_VLLM" \
   --reasoning "$REASONING" \
-  --num_chunks 1 \
+  --num_chunks 2 \
   --chunk_idx 0 \
   --max_image_num "$MAX_IMAGE_NUM" \
   --max_new_tokens "$MAX_NEW_TOKENS" \

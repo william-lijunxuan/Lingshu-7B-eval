@@ -68,9 +68,16 @@ class MedGemma:
         
         print(f"\ninput prompt:{current_messages}\n")
         inputs = self.processor.apply_chat_template(
-            current_messages, add_generation_prompt=True, tokenize=True,
-            return_dict=True, return_tensors="pt"
-        ).to(self.llm.device, dtype=torch.bfloat16)
+            current_messages,
+            add_generation_prompt=True,
+            tokenize=True,
+            return_dict=True,
+            return_tensors="pt"
+        )
+
+        inputs = {k: v.to(self.llm.device) if torch.is_tensor(v) else v for k, v in inputs.items()}
+        if "pixel_values" in inputs and inputs["pixel_values"] is not None:
+            inputs["pixel_values"] = inputs["pixel_values"].to(dtype=torch.bfloat16)
 
         return inputs
 
@@ -80,7 +87,17 @@ class MedGemma:
         input_len = llm_inputs["input_ids"].shape[-1]
         with torch.inference_mode():
             do_sample = False if self.temperature == 0 else True
-            generation = self.llm.generate(**llm_inputs,max_new_tokens=self.max_new_tokens,do_sample = do_sample, pad_token_id= self.processor.tokenizer.eos_token_id,top_k = None,top_p = None)
+            generation = self.llm.generate(
+                **llm_inputs,
+                max_new_tokens=self.max_new_tokens,
+                do_sample=do_sample,
+                temperature=None if not do_sample else self.temperature,
+                top_p=None if not do_sample else self.top_p,
+                repetition_penalty=self.repetition_penalty,
+                pad_token_id=self.processor.tokenizer.eos_token_id,
+                eos_token_id=self.processor.tokenizer.eos_token_id,
+                use_cache=True,
+            )
             generation = generation[0][input_len:]
         decoded = self.processor.decode(generation, skip_special_tokens=True)
         return decoded
