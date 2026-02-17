@@ -34,7 +34,7 @@ class Derm1m(BaseDataset):
                 with open(path, "r", encoding="utf-8") as f:
                     records = json.load(f)
             train_ds = Dataset.from_list(records)
-            dataset = train_ds.select(range(995-1000))
+            dataset = train_ds.select(range(995,1000))
             # dataset = train_ds
             for idx,sample in tqdm(enumerate(dataset)):
                 if idx % self.num_chunks == self.chunk_idx:
@@ -247,7 +247,7 @@ class Derm1m(BaseDataset):
                 if metric not in ["right", "total", "acc"]:
                     metrics["open"][metric] = 0.0
 
-        total_time = float(os.environ.get("total_time") or 0.0)
+        total_time = float(os.environ.get("total_time"))
         total_samples = metrics["total metrics"]["total"]
         avg_time = total_time / total_samples if total_samples > 0 else 0.0
 
