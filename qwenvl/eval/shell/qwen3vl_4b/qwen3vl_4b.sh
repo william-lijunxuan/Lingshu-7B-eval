@@ -32,7 +32,8 @@ MODEL_NAME="Qwen3vl_8b" # Qwen3vl_8b and Qwen3-VL-4B-Instruct use same code
 CONFIG_MODEL_NAME="Qwen3vl_4b"
 #ADAPTER_PATH="/root/model/Lingshu-7B-Finetuning/qwenvl/scripts/output"
 #ADAPTER_PATH="/root/model/Lingshu-7B-eval/qwenvl/eval/output"
-ADAPTER_PATH=None
+#ADAPTER_PATH=None
+ADAPTER_PATH="/root/model/Qwen3-VL-4B-Instruct-trl-grpo"
 
 # vllm settings
 CUDA_VISIBLE_DEVICES="0,1"
