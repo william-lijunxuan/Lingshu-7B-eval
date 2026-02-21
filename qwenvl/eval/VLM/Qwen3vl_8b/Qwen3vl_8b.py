@@ -69,7 +69,7 @@ class Qwen3vl_8b:
         #         print("----------------------Use fine-tuned weights---------------------------")
         #         # merged_model = model.merge_and_unload()
         #         self.llm.eval()
-        generated_ids = self.llm.generate(**inputs,temperature=self.temperature,top_p=self.top_p,repetition_penalty=self.repetition_penalty,max_new_tokens=self.max_new_tokens,do_sample = do_sample,use_cache=False)
+        generated_ids = self.llm.generate(**inputs,temperature=self.temperature,top_p=self.top_p,repetition_penalty=self.repetition_penalty,max_new_tokens=self.max_new_tokens,do_sample = do_sample,use_cache=True)
         generated_ids_trimmed = [
             out_ids[len(in_ids) :] for in_ids, out_ids in zip(inputs.input_ids, generated_ids)
         ]
