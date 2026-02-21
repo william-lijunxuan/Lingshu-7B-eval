@@ -20,7 +20,7 @@ class LingShu:
             from peft import PeftModel
             self.llm = PeftModel.from_pretrained(self.llm, self.adapter_path)
             print("----------------------Use fine-tuned weights---------------------------")
-            # merged_model = model.merge_and_unload()
+            self.llm = self.llm.merge_and_unload()
             self.llm.eval()
 
 

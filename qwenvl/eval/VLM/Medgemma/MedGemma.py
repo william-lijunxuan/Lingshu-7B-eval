@@ -27,7 +27,7 @@ class MedGemma:
             from peft import PeftModel
             self.llm = PeftModel.from_pretrained(self.llm, self.adapter_path)
             print("----------------------Use GRPO weights---------------------------")
-            # merged_model = model.merge_and_unload()
+            self.llm = self.llm.merge_and_unload()
             self.llm.eval()
             print(type(self.llm))
             print(self.llm.peft_config.keys())
