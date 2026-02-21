@@ -30,9 +30,10 @@ OUTPUT_PATH="eval_results/Qwen3-VL-4B-Instruct"
 MODEL_PATH="/mnt/d/skinalor/model/Qwen3-VL-4B-Instruct"
 MODEL_NAME="Qwen3vl_8b" # Qwen3vl_8b and Qwen3-VL-4B-Instruct use same code
 CONFIG_MODEL_NAME="Qwen3vl_4b"
-#ADAPTER_PATH="/mnt/d/skinalor/model/Lingshu-7B-Finetuning/qwenvl/scripts/output"
-#ADAPTER_PATH="/mnt/d/skinalor/model/Lingshu-7B-eval/qwenvl/eval/output"
-ADAPTER_PATH=None
+#ADAPTER_PATH="/root/model/Lingshu-7B-Finetuning/qwenvl/scripts/output"
+#ADAPTER_PATH="/root/model/Lingshu-7B-eval/qwenvl/eval/output"
+#ADAPTER_PATH=None
+ADAPTER_PATH="/mnt/d/skinalor/model/Qwen3-VL-4B-Instruct-trl-grpo"
 
 # vllm settings
 CUDA_VISIBLE_DEVICES="0,1"
@@ -43,7 +44,7 @@ USE_VLLM="True"
 SEED=42
 REASONING="False"
 TEST_TIMES=1
-MAX_NEW_TOKENS=1024
+MAX_NEW_TOKENS=512
 MAX_IMAGE_NUM=6
 TEMPERATURE=0.7
 TOP_P=0.0001
@@ -69,7 +70,7 @@ python eval_sh.py \
   --tensor_parallel_size "$TENSOR_PARALLEL_SIZE" \
   --use_vllm "$USE_VLLM" \
   --reasoning "$REASONING" \
-  --num_chunks 1 \
+  --num_chunks 2 \
   --chunk_idx 0 \
   --max_image_num "$MAX_IMAGE_NUM" \
   --max_new_tokens "$MAX_NEW_TOKENS" \

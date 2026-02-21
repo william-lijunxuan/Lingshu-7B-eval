@@ -20,8 +20,7 @@ class Derm1m(BaseDataset):
         self.chunk_idx = int(os.environ.get("chunk_idx", 0))
         self.num_chunks = int(os.environ.get("num_chunks", 1))
         self.eval_local_datasets_flag = bool(strtobool(os.environ.get("eval_local_datasets_flag", True)))
-        self.eval_local_datasets_file = str(
-            os.environ.get("eval_local_datasets_file", "/mnt/d/skinalor/dataset/skin/Derm1M/Derm1M_train.jsonl"))
+        self.eval_local_datasets_file = str(os.environ.get("eval_local_datasets_file", "/mnt/d/skinalor/dataset/skin/Derm1M/Derm1M_train.jsonl"))
 
     def load_data(self):
         # load local evaldatasets

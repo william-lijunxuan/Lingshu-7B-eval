@@ -169,6 +169,14 @@ def _alias_map():
         {"filiform wart", "warts", "viral wart", "wart", "verruca"},
         {"plantar warts", "plantar wart"},
         {"genital warts", "genital wart"},
+        {"confluent and reticulated papillomatosis","confluent reticulated papillomatosis","crp"},
+        {"insect bite","insect bites"},
+        {"tuberous sclerosis","tuberous sclerosis complex"},
+        {"cutaneous horn","skin horn"},
+        {"keratolysis exfoliativa of wende","exfoliative keratolysis"},
+        {"tinea cruris","jock itch"},
+        {"cafe au lait macule","cafe au lait spot"},
+        {"psoriasis","scalp psoriasis"}
     ]
     alias2canon = {}
     for g in groups:
@@ -521,7 +529,7 @@ import os
 # Assume _norm, _alias_map, _ALIAS2CANON, _canonical, judge_close_end_vqa_json
 # are already defined exactly as you provided (do not modify them).
 
-RESULTS_PATH = r"\home\william\dataset\skin\Derm1M\1k\results_4B.json"
+RESULTS_PATH = r"\home\william\dataset\skin\Derm1M\1k\results_Hulu_4B.json"
 
 
 def _to_posix_path(p: str) -> str:
