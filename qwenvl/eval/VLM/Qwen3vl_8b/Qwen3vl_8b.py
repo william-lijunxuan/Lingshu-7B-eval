@@ -19,7 +19,7 @@ class Qwen3vl_8b:
         if self.adapter_path is not None and not (isinstance(self.adapter_path, str) and self.adapter_path.strip().lower() in {"none", "null", ""}):
             from peft import PeftModel
             self.llm = PeftModel.from_pretrained(self.llm, self.adapter_path)
-            merged_model = self.merge_and_unload()
+            self.llm = self.llm.merge_and_unload()
             print("----------------------Use fine-tuned weights---------------------------")
             self.llm.eval()
 
