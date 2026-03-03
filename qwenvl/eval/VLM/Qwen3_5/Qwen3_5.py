@@ -52,10 +52,11 @@ class Qwen3_5:
             tokenize=False,
             add_generation_prompt=True,
         )
-        image_inputs = process_vision_info(messages)
+        print("----------------------------messages:{}",messages)
+        # image_inputs = process_vision_info(messages)
         inputs = self.processor(
             text=[prompt],
-            images=image_inputs,
+            images=[messages["images"]],
             padding=True,
             return_tensors="pt",
         )
