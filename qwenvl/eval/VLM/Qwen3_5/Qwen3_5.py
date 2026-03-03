@@ -53,8 +53,6 @@ class Qwen3_5:
             tokenize=False,
             add_generation_prompt=True,
         )
-        print("----------------------------messages:{}",messages)
-        # image_inputs = process_vision_info(messages)
         inputs = self.processor(
             text=[prompt],
             images=[imageFile],
@@ -81,7 +79,7 @@ class Qwen3_5:
             "temperature": 1.0,
             "top_p": 0.95,
             "top_k": 20,
-            "do_sample": True,
+            "do_sample": False,
             "pad_token_id": self.processor.tokenizer.pad_token_id,
         }
         generated_ids = self.llm.generate(**inputs,**generation_config)
