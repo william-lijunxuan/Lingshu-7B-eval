@@ -44,7 +44,7 @@ print("prompt",messages)
 # ============ 推理 ============
 print("Generating response...")
 text = processor.apply_chat_template(
-    messages, tokenize=False, add_generation_prompt=True
+    messages, tokenize=False, add_generation_prompt=True,chat_template_kwargs={"enable_thinking": False},
 )
 inputs = processor(
     text=[text],
@@ -60,8 +60,7 @@ generation_config = {
     "top_p": 0.95,
     "top_k": 20,
     "do_sample": True,
-    "pad_token_id": processor.tokenizer.pad_token_id,
-    "enable_thinking": False
+    "pad_token_id": processor.tokenizer.pad_token_id
 }
 
 with torch.no_grad():
