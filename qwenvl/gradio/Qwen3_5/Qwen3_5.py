@@ -44,7 +44,7 @@ print("prompt",messages)
 # ============ 推理 ============
 print("Generating response...")
 text = processor.apply_chat_template(
-    messages, tokenize=False, add_generation_prompt=True,chat_template_kwargs={"enable_thinking": False},
+    messages, tokenize=False, add_generation_prompt=True,
 )
 inputs = processor(
     text=[text],
