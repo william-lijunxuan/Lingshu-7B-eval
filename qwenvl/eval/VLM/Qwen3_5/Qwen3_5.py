@@ -7,7 +7,7 @@ class Qwen3_5:
     def __init__(self, model_path, args):
         super().__init__()
         self.llm = Qwen3_5ForConditionalGeneration.from_pretrained(
-            model_path,torch_dtype=torch.bfloat16, device_map="cuda", attn_implementation="flash_attention_2",trust_remote_code=True)
+            model_path,torch_dtype=torch.bfloat16, device_map="auto", attn_implementation="flash_attention_2",trust_remote_code=True)
         self.processor = AutoProcessor.from_pretrained(model_path,use_fast=True,trust_remote_code=True)
         # self.processor.save_pretrained(model_path)
         self.temperature = args.temperature
@@ -22,6 +22,12 @@ class Qwen3_5:
             print("----------------------Use fine-tuned weights---------------------------")
             # merged_model = model.merge_and_unload()
             self.llm.eval()
+        if getattr(self.processor, "tokenizer", None) is not None:
+            if self.processor.tokenizer.pad_token_id is None:
+                self.processor.tokenizer.pad_token_id = self.processor.tokenizer.eos_token_id
+        if getattr(self.llm, "generation_config", None) is not None and self.llm.generation_config.pad_token_id is None:
+            self.llm.generation_config.pad_token_id = self.llm.generation_config.eos_token_id
+
 
 
     def process_messages(self, messages):
@@ -69,7 +75,7 @@ class Qwen3_5:
         #         print("----------------------Use fine-tuned weights---------------------------")
         #         # merged_model = model.merge_and_unload()
         #         self.llm.eval()
-        generated_ids = self.llm.generate(**inputs,temperature=self.temperature,top_p=self.top_p,repetition_penalty=self.repetition_penalty,max_new_tokens=self.max_new_tokens,do_sample = do_sample,use_cache=True)
+        generated_ids = self.llm.generate(**inputs,temperature=self.temperature,top_p=self.top_p,repetition_penalty=self.repetition_penalty,max_new_tokens=self.max_new_tokens,do_sample = do_sample,use_cache=True,pad_token_id=self.processor.tokenizer.pad_token_id)
         generated_ids_trimmed = [
             out_ids[len(in_ids) :] for in_ids, out_ids in zip(inputs.input_ids, generated_ids)
         ]
