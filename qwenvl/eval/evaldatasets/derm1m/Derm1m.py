@@ -114,7 +114,7 @@ class Derm1m(BaseDataset):
             '''
         )
 
-        primary_img_path = os.path.join("/root/dataset/skin/Derm1M", sample["image"])
+        primary_img_path = os.path.join("/root/dataset/skin/Derm1M/clean", sample["image"])
         image = Image.open(primary_img_path).convert("RGB")
         messages = {"system": systemMes, "prompt": prompt_text, "image": image}
         # messages = {"prompt": prompt_text, "image": image}
