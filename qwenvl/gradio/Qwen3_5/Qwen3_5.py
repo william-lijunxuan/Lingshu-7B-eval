@@ -40,7 +40,7 @@ messages = [
         ]
     }
 ]
-
+print("prompt",messages)
 # ============ 推理 ============
 print("Generating response...")
 text = processor.apply_chat_template(
