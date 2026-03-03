@@ -61,7 +61,7 @@ generation_config = {
     "top_k": 20,
     "do_sample": True,
     "pad_token_id": processor.tokenizer.pad_token_id,
-    "chat_template_kwargs": {"enable_thinking": False},
+    "enable_thinking": False
 }
 
 with torch.no_grad():
