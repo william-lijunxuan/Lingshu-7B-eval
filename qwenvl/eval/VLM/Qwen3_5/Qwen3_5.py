@@ -61,7 +61,7 @@ class Qwen3_5:
             padding=True,
             return_tensors="pt",
         )
-        inputs = inputs.to("auto")
+        inputs = inputs.to("cuda")
 
         return inputs
 
