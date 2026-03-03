@@ -2,8 +2,8 @@ from transformers import Qwen2_5_VLForConditionalGeneration, AutoProcessor
 from qwen_vl_utils import process_vision_info
 import torch
 
-model_path ="/root/model/Lingshu-32B"
-image_path ="/root/dataset/skin/Derm1M/IIYI/7_3.png"
+model_path ="/home/william/model/Lingshu-32B"
+image_path ="/home/william/dataset/skin/Derm1M/IIYI/7_3.png"
 # We recommend enabling flash_attention_2 for better acceleration and memory saving, especially in multi-image and video scenarios.
 model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
     model_path,
