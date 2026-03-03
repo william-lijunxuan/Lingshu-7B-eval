@@ -52,6 +52,7 @@ class Qwen3_5:
             messages,
             tokenize=False,
             add_generation_prompt=True,
+            enable_thinking = False
         )
         inputs = self.processor(
             text=[prompt],
