@@ -22,12 +22,12 @@ class Qwen3_5:
             print("----------------------Use fine-tuned weights---------------------------")
             # merged_model = model.merge_and_unload()
             self.llm.eval()
-        if getattr(self.processor, "tokenizer", None) is not None:
-            if self.processor.tokenizer.pad_token_id is None:
-                self.processor.tokenizer.pad_token_id = self.processor.tokenizer.eos_token_id
-        if getattr(self.llm, "generation_config", None) is not None and self.llm.generation_config.pad_token_id is None:
-            self.llm.generation_config.pad_token_id = self.llm.generation_config.eos_token_id
-
+        # if getattr(self.processor, "tokenizer", None) is not None:
+        #     if self.processor.tokenizer.pad_token_id is None:
+        #         self.processor.tokenizer.pad_token_id = self.processor.tokenizer.eos_token_id
+        # if getattr(self.llm, "generation_config", None) is not None and self.llm.generation_config.pad_token_id is None:
+        #     self.llm.generation_config.pad_token_id = self.llm.generation_config.eos_token_id
+        #
 
 
     def process_messages(self, messages):
@@ -54,6 +54,9 @@ class Qwen3_5:
             add_generation_prompt=True,
             enable_thinking = False
         )
+
+        print("messages:",messages)
+        print("imageFile:",[imageFile])
         inputs = self.processor(
             text=[prompt],
             images=[imageFile],
@@ -80,7 +83,7 @@ class Qwen3_5:
             "temperature": 1.0,
             "top_p": 0.95,
             "top_k": 20,
-            "do_sample": False,
+            "do_sample": True,
             "pad_token_id": self.processor.tokenizer.pad_token_id,
         }
         generated_ids = self.llm.generate(**inputs,**generation_config)
