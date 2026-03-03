@@ -5,7 +5,7 @@ import requests
 from io import BytesIO
 
 # ============ 配置 ============
-model_path = "/home/william/model/Qwen3.5-4B"  # 您的本地模型路径
+model_path = "/root/model/Qwen3.5-4B"  # 您的本地模型路径
 device = "cuda" if torch.cuda.is_available() else "cpu"
 image_url = "https://qianwen-res.oss-accelerate.aliyuncs.com/Qwen3.5/demo/CI_Demo/mathv-1327.jpg"
 
