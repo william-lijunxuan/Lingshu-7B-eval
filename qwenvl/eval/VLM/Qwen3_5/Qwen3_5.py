@@ -52,15 +52,14 @@ class Qwen3_5:
             tokenize=False,
             add_generation_prompt=True,
         )
-        image_inputs, video_inputs = process_vision_info(messages)
+        image_inputs = process_vision_info(messages)
         inputs = self.processor(
             text=[prompt],
             images=image_inputs,
-            videos=video_inputs,
             padding=True,
             return_tensors="pt",
         )
-        inputs = inputs.to("cuda")
+        inputs = inputs.to("auto")
 
         return inputs
 
@@ -75,7 +74,16 @@ class Qwen3_5:
         #         print("----------------------Use fine-tuned weights---------------------------")
         #         # merged_model = model.merge_and_unload()
         #         self.llm.eval()
-        generated_ids = self.llm.generate(**inputs,temperature=self.temperature,top_p=self.top_p,repetition_penalty=self.repetition_penalty,max_new_tokens=self.max_new_tokens,do_sample = False,use_cache=True)
+        generation_config = {
+            "max_new_tokens": 512,
+            "temperature": 1.0,
+            "top_p": 0.95,
+            "top_k": 20,
+            "do_sample": True,
+            "pad_token_id": self.processor.tokenizer.pad_token_id,
+        }
+        generated_ids = self.llm.generate(**inputs,**generation_config)
+        # generated_ids = self.llm.generate(**inputs,temperature=self.temperature,top_p=self.top_p,repetition_penalty=self.repetition_penalty,max_new_tokens=self.max_new_tokens,do_sample = False,use_cache=True)
         generated_ids_trimmed = [
             out_ids[len(in_ids) :] for in_ids, out_ids in zip(inputs.input_ids, generated_ids)
         ]
