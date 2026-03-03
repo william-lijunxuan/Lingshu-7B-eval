@@ -37,6 +37,7 @@ class Qwen3_5:
         if "image" in messages:
             new_messages.append({"role": "user", "content": [{"type": "image", "image": messages["image"]},
                                                              {"type": "text", "text": messages["prompt"]}]})
+            imageFile= messages["image"]
         elif "images" in messages:
             content = []
             for i, image in enumerate(messages["images"]):
@@ -56,7 +57,7 @@ class Qwen3_5:
         # image_inputs = process_vision_info(messages)
         inputs = self.processor(
             text=[prompt],
-            images=[messages["images"]],
+            images=[imageFile],
             padding=True,
             return_tensors="pt",
         )
