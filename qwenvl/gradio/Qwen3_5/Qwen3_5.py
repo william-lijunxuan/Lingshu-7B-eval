@@ -5,7 +5,7 @@ import requests
 from io import BytesIO
 
 # ============ 配置 ============
-model_path = "/root/model/Qwen3.5-4B-Base"  # 您的本地模型路径
+model_path = "/root/model/Qwen3.5-4B"  # 您的本地模型路径
 device = "cuda" if torch.cuda.is_available() else "cpu"
 image_path = "/root/dataset/skin/Derm1M/clean/edu/978-3-642-97931-6_00100_01864.png"
 
@@ -44,7 +44,7 @@ print("prompt",messages)
 # ============ 推理 ============
 print("Generating response...")
 text = processor.apply_chat_template(
-    messages, tokenize=False, add_generation_prompt=True,
+    messages, tokenize=False, add_generation_prompt=True,enable_thinking=False
 )
 inputs = processor(
     text=[text],
