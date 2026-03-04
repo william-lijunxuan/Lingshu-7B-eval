@@ -6,7 +6,7 @@ import time
 class Qwen3_5:
     def __init__(self, model_path, args):
         super().__init__()
-        self.llm = Qwen3_5ForConditionalGeneration.from_pretrained(model_path,torch_dtype=torch.bfloat16, device_map="auto",trust_remote_code=True)
+        self.llm = Qwen3_5ForConditionalGeneration.from_pretrained(model_path,torch_dtype=torch.bfloat16, device_map="auto",attn_implementation="flash_attention_2",trust_remote_code=True)
         # self.llm = Qwen3_5ForConditionalGeneration.from_pretrained(model_path,torch_dtype=torch.bfloat16, device_map="auto", attn_implementation="flash_attention_2",trust_remote_code=True)
         self.processor = AutoProcessor.from_pretrained(model_path,use_fast=True,trust_remote_code=True)
         # self.processor.save_pretrained(model_path)
