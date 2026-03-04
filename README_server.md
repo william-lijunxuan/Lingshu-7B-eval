@@ -32,3 +32,12 @@ conda activate lingshu
 cd qwenvl/eval/gradio/lingshu-7b
 python multi_image_conversation.py
 ```
+
+# Run qwen3.5
+```bash
+cd model
+git clone https://huggingface.co/Qwen/Qwen3.5-4B
+conda activate lingshu
+cd qwenvl/eval/gradio/lingshu-7b
+python multi_image_conversation.py
+```
