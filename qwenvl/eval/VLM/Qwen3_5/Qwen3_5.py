@@ -12,6 +12,7 @@ class Qwen3_5:
         # self.processor.save_pretrained(model_path)
         self.temperature = args.temperature
         self.top_p = args.top_p
+        self.top_k = args.top_k
         self.repetition_penalty = args.repetition_penalty
         self.max_new_tokens = args.max_new_tokens
         self.adapter_path = getattr(args, "adapter_path", None)
@@ -22,12 +23,6 @@ class Qwen3_5:
             print("----------------------Use fine-tuned weights---------------------------")
             # merged_model = model.merge_and_unload()
             self.llm.eval()
-        # if getattr(self.processor, "tokenizer", None) is not None:
-        #     if self.processor.tokenizer.pad_token_id is None:
-        #         self.processor.tokenizer.pad_token_id = self.processor.tokenizer.eos_token_id
-        # if getattr(self.llm, "generation_config", None) is not None and self.llm.generation_config.pad_token_id is None:
-        #     self.llm.generation_config.pad_token_id = self.llm.generation_config.eos_token_id
-        #
 
 
     def process_messages(self, messages):
@@ -54,9 +49,6 @@ class Qwen3_5:
             add_generation_prompt=True,
             enable_thinking = False
         )
-
-        print("messages:",messages)
-        print("imageFile:",[imageFile])
         inputs = self.processor(
             text=[prompt],
             images=[imageFile],
@@ -69,27 +61,20 @@ class Qwen3_5:
 
     def generate_output(self, messages):
         inputs = self.process_messages(messages)
-        # print(f"prompt:{messages}")
+        print(f"prompt:{messages}")
         do_sample = False if self.temperature == 0 else True
-        # with torch.no_grad():
-        #     if self.adapter_path is not None:
-        #         from peft import PeftModel
-        #         self.llm = PeftModel.from_pretrained(self.llm, self.adapter_path)
-        #         print("----------------------Use fine-tuned weights---------------------------")
-        #         # merged_model = model.merge_and_unload()
-        #         self.llm.eval()
         generation_config = {
             "max_new_tokens": self.max_new_tokens,
             "temperature": self.temperature,
             "top_p": self.top_p,
-            "top_k": 20,
-            "do_sample": True,
+            "top_k": self.top_k,
+            "do_sample": do_sample,
             "pad_token_id": self.processor.tokenizer.pad_token_id,
+            "use_cache" : True
         }
         print("generation_config:",generation_config)
         with torch.no_grad():
             output_ids = self.llm.generate(**inputs, **generation_config)
-        # generated_ids = self.llm.generate(**inputs,temperature=self.temperature,top_p=self.top_p,repetition_penalty=self.repetition_penalty,max_new_tokens=self.max_new_tokens,do_sample = False,use_cache=True)
         input_len = inputs["input_ids"].shape[1]
         generated_ids = output_ids[0][input_len:]
         response = self.processor.decode(generated_ids, skip_special_tokens=True)
