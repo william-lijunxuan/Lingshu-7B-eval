@@ -79,9 +79,9 @@ class Qwen3_5:
         #         # merged_model = model.merge_and_unload()
         #         self.llm.eval()
         generation_config = {
-            "max_new_tokens": 512,
-            "temperature": 1.0,
-            "top_p": 0.95,
+            "max_new_tokens": self.max_new_tokens,
+            "temperature": self.temperature,
+            "top_p": self.top_p,
             "top_k": 20,
             "do_sample": True,
             "pad_token_id": self.processor.tokenizer.pad_token_id,
