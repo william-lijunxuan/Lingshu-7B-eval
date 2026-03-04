@@ -62,6 +62,7 @@ generation_config = {
     "do_sample": True,
     "pad_token_id": processor.tokenizer.pad_token_id
 }
+print("generation_config:", generation_config)
 
 with torch.no_grad():
     output_ids = model.generate(**inputs, **generation_config)

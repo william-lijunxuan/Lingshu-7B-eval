@@ -87,7 +87,8 @@ class Qwen3_5:
             "pad_token_id": self.processor.tokenizer.pad_token_id,
         }
         print("generation_config:",generation_config)
-        generated_ids = self.llm.generate(**inputs,**generation_config)
+        with torch.no_grad():
+            generated_ids = self.llm.generate(**inputs,**generation_config)
         # generated_ids = self.llm.generate(**inputs,temperature=self.temperature,top_p=self.top_p,repetition_penalty=self.repetition_penalty,max_new_tokens=self.max_new_tokens,do_sample = False,use_cache=True)
         generated_ids_trimmed = [
             out_ids[len(in_ids) :] for in_ids, out_ids in zip(inputs.input_ids, generated_ids)
