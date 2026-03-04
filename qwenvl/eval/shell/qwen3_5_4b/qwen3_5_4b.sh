@@ -77,6 +77,7 @@ python eval_sh.py \
   --max_new_tokens "$MAX_NEW_TOKENS" \
   --temperature "$TEMPERATURE" \
   --top_p "$TOP_P" \
+  --top_k "$TOP_K" \
   --repetition_penalty "$REPETITION_PENALTY" \
   --test_times "$TEST_TIMES" \
   --use_llm_judge "$USE_LLM_JUDGE" \
