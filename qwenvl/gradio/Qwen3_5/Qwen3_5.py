@@ -15,9 +15,9 @@ model = Qwen3_5ForConditionalGeneration.from_pretrained(
     model_path,
     torch_dtype=torch.bfloat16 if device == "cuda" else torch.float32,
     device_map="auto" if device == "cuda" else None,
-    trust_remote_code=True,
+    trust_remote_code=True,attn_implementation="flash_attention_2",
 )
-processor = AutoProcessor.from_pretrained(model_path, trust_remote_code=True)
+processor = AutoProcessor.from_pretrained(model_path, use_fast=True,trust_remote_code=True)
 
 # ============ 准备输入 ============
 

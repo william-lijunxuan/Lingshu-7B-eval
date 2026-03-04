@@ -88,18 +88,12 @@ class Qwen3_5:
         }
         print("generation_config:",generation_config)
         with torch.no_grad():
-            generated_ids = self.llm.generate(**inputs,**generation_config)
+            output_ids = self.llm.generate(**inputs, **generation_config)
         # generated_ids = self.llm.generate(**inputs,temperature=self.temperature,top_p=self.top_p,repetition_penalty=self.repetition_penalty,max_new_tokens=self.max_new_tokens,do_sample = False,use_cache=True)
-        generated_ids_trimmed = [
-            out_ids[len(in_ids) :] for in_ids, out_ids in zip(inputs.input_ids, generated_ids)
-        ]
-        output_text = self.processor.batch_decode(
-            generated_ids_trimmed, skip_special_tokens=True, clean_up_tokenization_spaces=False
-        )
-        del inputs, generated_ids, generated_ids_trimmed
-        gc.collect()
-        torch.cuda.empty_cache()
-        return output_text[0]
+        input_len = inputs["input_ids"].shape[1]
+        generated_ids = output_ids[0][input_len:]
+        response = self.processor.decode(generated_ids, skip_special_tokens=True)
+        return response
 
     def generate_outputs(self, messages_list):
         res = []
