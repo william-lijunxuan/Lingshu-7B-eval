@@ -86,6 +86,7 @@ class Qwen3_5:
             "do_sample": True,
             "pad_token_id": self.processor.tokenizer.pad_token_id,
         }
+        print("generation_config:",generation_config)
         generated_ids = self.llm.generate(**inputs,**generation_config)
         # generated_ids = self.llm.generate(**inputs,temperature=self.temperature,top_p=self.top_p,repetition_penalty=self.repetition_penalty,max_new_tokens=self.max_new_tokens,do_sample = False,use_cache=True)
         generated_ids_trimmed = [
