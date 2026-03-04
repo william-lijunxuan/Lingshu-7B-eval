@@ -1,0 +1,94 @@
+from qwen_vl_utils import process_vision_info
+from transformers import Qwen3_5ForConditionalGeneration, AutoTokenizer, AutoProcessor
+import torch,gc
+import time
+
+class Qwen3_5:
+    def __init__(self, model_path, args):
+        super().__init__()
+        self.llm = Qwen3_5ForConditionalGeneration.from_pretrained(model_path,torch_dtype=torch.bfloat16, device_map="auto",trust_remote_code=True)
+        # self.llm = Qwen3_5ForConditionalGeneration.from_pretrained(model_path,torch_dtype=torch.bfloat16, device_map="auto", attn_implementation="flash_attention_2",trust_remote_code=True)
+        self.processor = AutoProcessor.from_pretrained(model_path,use_fast=True,trust_remote_code=True)
+        # self.processor.save_pretrained(model_path)
+        self.temperature = args.temperature
+        self.top_p = args.top_p
+        self.top_k = args.top_k
+        self.repetition_penalty = args.repetition_penalty
+        self.max_new_tokens = args.max_new_tokens
+        self.adapter_path = getattr(args, "adapter_path", None)
+        print(f"adapter_path:{self.adapter_path}")
+        if self.adapter_path is not None and not (isinstance(self.adapter_path, str) and self.adapter_path.strip().lower() in {"none", "null", ""}):
+            from peft import PeftModel
+            self.llm = PeftModel.from_pretrained(self.llm, self.adapter_path)
+            print("----------------------Use fine-tuned weights---------------------------")
+            # merged_model = model.merge_and_unload()
+            self.llm.eval()
+
+
+    def process_messages(self, messages):
+        new_messages = []
+        if "system" in messages:
+            new_messages.append({"role": "system", "content": messages["system"]})
+        if "image" in messages:
+            new_messages.append({"role": "user", "content": [{"type": "image", "image": messages["image"]},
+                                                             {"type": "text", "text": messages["prompt"]}]})
+            imageFile= messages["image"]
+        elif "images" in messages:
+            content = []
+            for i, image in enumerate(messages["images"]):
+                content.append({"type": "text", "text": f"<image_{i + 1}>: "})
+                content.append({"type": "image", "image": image})
+            content.append({"type": "text", "text": messages["prompt"]})
+            new_messages.append({"role": "user", "content": content})
+        else:
+            new_messages.append({"role": "user", "content": [{"type": "text", "text": messages["prompt"]}]})
+        messages = new_messages
+        prompt = self.processor.apply_chat_template(
+            messages,
+            tokenize=False,
+            add_generation_prompt=True,
+            enable_thinking = False
+        )
+        inputs = self.processor(
+            text=[prompt],
+            images=[imageFile],
+            padding=True,
+            return_tensors="pt",
+        )
+        inputs = inputs.to("cuda")
+
+        return inputs
+
+    def generate_output(self, messages):
+        inputs = self.process_messages(messages)
+        print(f"prompt:{messages}")
+        do_sample = False if self.temperature == 0 else True
+        generation_config = {
+            "max_new_tokens": self.max_new_tokens,
+            "temperature": self.temperature,
+            "top_p": self.top_p,
+            "top_k": self.top_k,
+            "do_sample": do_sample,
+            "pad_token_id": self.processor.tokenizer.pad_token_id,
+            "use_cache" : True
+        }
+        print("generation_config:",generation_config)
+        with torch.no_grad():
+            output_ids = self.llm.generate(**inputs, **generation_config)
+        input_len = inputs["input_ids"].shape[1]
+        generated_ids = output_ids[0][input_len:]
+        response = self.processor.decode(generated_ids, skip_special_tokens=True)
+        return response
+
+    def generate_outputs(self, messages_list):
+        res = []
+        sub_total_time = []
+        for idx, messages in enumerate(messages_list, start=1):
+            start_times = time.perf_counter()
+            result = self.generate_output(messages)
+            end_times = time.perf_counter()
+            delta = end_times - start_times
+            print(f"idx:{idx},result-------------:{result},total_time:{delta}")
+            res.append(result)
+            sub_total_time.append(delta)
+        return res, sub_total_time

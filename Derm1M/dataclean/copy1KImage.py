@@ -3,16 +3,17 @@ import shutil
 from pathlib import Path
 
 
-# JSONL_PATH = Path("/home/william/dataset/skin/Derm1M/eval_Derm1M_train_json_1k_clean.jsonl")
-JSONL_PATH = Path("/home/william/dataset/skin/Derm1M/eval_Derm1M_train_json_1k_clean.jsonl")
+JSONL_PATH = Path("/root/dataset/skin/Derm1M/eval_Derm1M_train_json_1k.jsonl")
 SRC_ROOT = JSONL_PATH.parent  # /home/william/dataset/skin/Derm1M
 DST_DIR = SRC_ROOT / "clean"
 
 
-def safe_dst_name(rel_path: str) -> str:
-    # Avoid collisions by encoding subfolders into filename
-    # e.g. "youtube/a/b.jpg" -> "youtube__a__b.jpg"
-    return rel_path.replace("\\", "/").strip("/").replace("/", "__")
+def first_level_dir(rel_path: str) -> str:
+    p = Path(rel_path.replace("\\", "/").lstrip("/"))
+    parts = p.parts
+    if len(parts) >= 2:
+        return parts[0]
+    return ""
 
 
 def main():
@@ -22,6 +23,7 @@ def main():
     copied = 0
     missing = 0
     errors = 0
+    skipped_exists = 0
 
     with JSONL_PATH.open("r", encoding="utf-8") as f:
         for line_no, line in enumerate(f, 1):
@@ -41,14 +43,21 @@ def main():
                 errors += 1
                 continue
 
-            src = SRC_ROOT / rel
+            rel_norm = rel.replace("\\", "/").lstrip("/")
+            src = SRC_ROOT / rel_norm
             if not src.exists():
                 missing += 1
                 continue
 
-            dst = DST_DIR / safe_dst_name(rel)
+            top_dir = first_level_dir(rel_norm)
+            filename = Path(rel_norm).name
+
+            dst_subdir = DST_DIR / top_dir if top_dir else DST_DIR
+            dst_subdir.mkdir(parents=True, exist_ok=True)
+
+            dst = dst_subdir / filename
             if dst.exists():
-                copied += 1
+                skipped_exists += 1
                 continue
 
             try:
@@ -58,7 +67,8 @@ def main():
                 errors += 1
 
     print(
-        f"Done. total_lines={total}, copied={copied}, missing={missing}, errors={errors}, dst='{DST_DIR}'"
+        f"Done. total_lines={total}, copied={copied}, missing={missing}, "
+        f"errors={errors}, skipped_exists={skipped_exists}, dst='{DST_DIR}'"
     )
 
 
