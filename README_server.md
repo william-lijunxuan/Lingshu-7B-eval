@@ -37,7 +37,11 @@ python multi_image_conversation.py
 ```bash
 cd model
 git clone https://huggingface.co/Qwen/Qwen3.5-4B
+# open new terminal
 conda activate lingshu
-cd qwenvl/eval/gradio/lingshu-7b
-python multi_image_conversation.py
+pip install -U transformers
+cd model/Lingshu-7B-eval/qwenvl/eval
+git stash save"RL_eval"
+git pull
+bash shell/qwen3_5_4b/qwen3_5_4b.sh
 ```

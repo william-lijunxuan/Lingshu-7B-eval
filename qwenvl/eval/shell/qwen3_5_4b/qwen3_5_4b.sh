@@ -36,8 +36,8 @@ ADAPTER_PATH=None
 #ADAPTER_PATH="/mnt/d/skinalor/model/Qwen3.5-4B-Instruct-trl-grpo"
 
 # vllm settings
-CUDA_VISIBLE_DEVICES="0"
-TENSOR_PARALLEL_SIZE="1"
+CUDA_VISIBLE_DEVICES="0,1"
+TENSOR_PARALLEL_SIZE="2"
 USE_VLLM="True"
 
 # evaluation settings
