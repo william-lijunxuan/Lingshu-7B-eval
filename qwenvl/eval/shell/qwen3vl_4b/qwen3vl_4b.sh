@@ -30,8 +30,8 @@ OUTPUT_PATH="eval_results/Qwen3-VL-4B-Instruct"
 MODEL_PATH="/mnt/d/skinalor/model/Qwen3-VL-4B-Instruct"
 MODEL_NAME="Qwen3vl_8b" # Qwen3vl_8b and Qwen3-VL-4B-Instruct use same code
 CONFIG_MODEL_NAME="Qwen3vl_4b"
-#ADAPTER_PATH="/root/model/Lingshu-7B-Finetuning/qwenvl/scripts/output"
-#ADAPTER_PATH="/root/model/Lingshu-7B-eval/qwenvl/eval/output"
+#ADAPTER_PATH="/mnt/d/skinalor/model/Lingshu-7B-Finetuning/qwenvl/scripts/output"
+#ADAPTER_PATH="/mnt/d/skinalor/model/Lingshu-7B-eval/qwenvl/eval/output"
 #ADAPTER_PATH=None
 ADAPTER_PATH="/mnt/d/skinalor/model/Qwen3-VL-4B-Instruct-trl-grpo"
 
