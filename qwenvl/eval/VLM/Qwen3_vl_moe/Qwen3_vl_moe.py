@@ -3,7 +3,7 @@ from transformers import  Qwen3VLMoeForConditionalGeneration, AutoTokenizer, Aut
 import torch,gc
 import time
 
-class Qwen3vl_moe:
+class Qwen3_vl_moe:
     def __init__(self, model_path, args):
         super().__init__()
         self.llm =  Qwen3VLMoeForConditionalGeneration.from_pretrained(

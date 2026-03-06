@@ -28,8 +28,8 @@ OUTPUT_PATH="eval_results/Hulu-Med-30A3"
 
 # VLM model config
 MODEL_PATH="/root/model/Hulu-Med-30A3"
-MODEL_NAME="Qwen3vl_moe"
-CONFIG_MODEL_NAME="Qwen3vl_moe"
+MODEL_NAME="Qwen3_vl_moe"
+CONFIG_MODEL_NAME="Qwen3_vl_moe"
 #ADAPTER_PATH="/root/model/Lingshu-7B-Finetuning/qwenvl/scripts/output"
 #ADAPTER_PATH="/root/model/Lingshu-7B-eval/qwenvl/eval/output"
 ADAPTER_PATH=None
