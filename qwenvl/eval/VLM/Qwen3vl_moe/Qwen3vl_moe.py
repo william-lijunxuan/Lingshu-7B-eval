@@ -13,7 +13,9 @@ class Qwen3vl_moe:
             bnb_4bit_use_double_quant=True,
         )
         self.llm =  Qwen3VLMoeForConditionalGeneration.from_pretrained(
-            model_path,    quantization_config=bnb_config, device_map="auto", attn_implementation="flash_attention_2",trust_remote_code=True)
+            model_pathquantization_config=bnb_config, device_map="auto",max_memory={0: "21GiB",1: "21GiB","cpu": "60GiB",},
+            low_cpu_mem_usage=True,
+            attn_implementation="flash_attention_2",trust_remote_code=True)
         self.processor = AutoProcessor.from_pretrained(model_path,trust_remote_code=True,use_fast=True,fix_mistral_regex=True)
         # self.processor.save_pretrained(model_path)
         self.temperature = args.temperature
