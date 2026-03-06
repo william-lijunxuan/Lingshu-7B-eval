@@ -8,8 +8,7 @@ class Qwen3vl_moe:
         super().__init__()
         self.llm =  Qwen3VLMoeForConditionalGeneration.from_pretrained(
             model_path,torch_dtype=torch.bfloat16, device_map="auto", attn_implementation="flash_attention_2",trust_remote_code=True)
-        print("hf_device_map:",self.llm.hf_device_map)
-        self.processor = AutoProcessor.from_pretrained(model_path,trust_remote_code=True,use_fast=True)
+        self.processor = AutoProcessor.from_pretrained(model_path,trust_remote_code=True,use_fast=True,fix_mistral_regex=True)
         # self.processor.save_pretrained(model_path)
         self.temperature = args.temperature
         self.top_p = args.top_p
