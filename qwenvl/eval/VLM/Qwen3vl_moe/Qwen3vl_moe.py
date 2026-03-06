@@ -1,13 +1,19 @@
 from qwen_vl_utils import process_vision_info
-from transformers import  Qwen3VLMoeForConditionalGeneration, AutoProcessor
+from transformers import  Qwen3VLMoeForConditionalGeneration, AutoProcessor,BitsAndBytesConfig
 import torch,gc
 import time
 
 class Qwen3vl_moe:
     def __init__(self, model_path, args):
         super().__init__()
+        bnb_config = BitsAndBytesConfig(
+            load_in_4bit=True,
+            bnb_4bit_compute_dtype=torch.bfloat16,
+            bnb_4bit_quant_type="nf4",
+            bnb_4bit_use_double_quant=True,
+        )
         self.llm =  Qwen3VLMoeForConditionalGeneration.from_pretrained(
-            model_path,torch_dtype=torch.bfloat16, device_map="balanced", attn_implementation="flash_attention_2",trust_remote_code=True)
+            model_path,    quantization_config=bnb_config, device_map="auto", attn_implementation="flash_attention_2",trust_remote_code=True)
         self.processor = AutoProcessor.from_pretrained(model_path,trust_remote_code=True,use_fast=True,fix_mistral_regex=True)
         # self.processor.save_pretrained(model_path)
         self.temperature = args.temperature
