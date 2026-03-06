@@ -37,6 +37,12 @@ class Qwen3_5:
     def __new__(cls, model_path: str, args: Any) -> Any:
         from .Qwen3_5.Qwen3_5 import Qwen3_5
         return Qwen3_5(model_path, args)
+
+@VLMRegistry.register("Qwen3vl_moe")
+class Qwen3vl_moe:
+    def __new__(cls, model_path: str, args: Any) -> Any:
+        from .Qwen3vl_moe.Qwen3vl_moe import Qwen3vl_moe
+        return Qwen3vl_moe(model_path, args)
 @VLMRegistry.register("MedGemma")
 class MedGemma:
     def __new__(cls, model_path: str, args: Any) -> Any:
