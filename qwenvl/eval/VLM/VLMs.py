@@ -16,6 +16,10 @@ class VLMRegistry:
             raise ValueError(f"Model {name} not found in registry")
         return cls._models[name]
 
+    @classmethod
+    def list_models(cls):
+        return sorted(cls._models.keys())
+
 @VLMRegistry.register("MedVLM-R1")
 class MedVLM_R1:
     def __new__(cls, model_path: str, args: Any) -> Any:
