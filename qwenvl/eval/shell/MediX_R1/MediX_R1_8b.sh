@@ -28,8 +28,8 @@ OUTPUT_PATH="eval_results/MediX-R1-8B"
 
 # VLM model config
 MODEL_PATH="/root/model/MediX-R1-8B"
-MODEL_NAME="Hulu_Med_7B"
-CONFIG_MODEL_NAME="Hulu_Med_7B"
+MODEL_NAME="Qwen3vl_8b"
+CONFIG_MODEL_NAME="Qwen3vl_8b"
 ADAPTER_PATH=None
 
 # vllm settings
