@@ -7,8 +7,8 @@ class Qwen3vl_moe:
     def __init__(self, model_path, args):
         super().__init__()
         self.llm =  Qwen3VLMoeForConditionalGeneration.from_pretrained(
-            model_path,torch_dtype=torch.bfloat16, device_map="auto", attn_implementation="flash_attention_2")
-        self.processor = AutoProcessor.from_pretrained(model_path,use_fast=True)
+            model_path,torch_dtype=torch.bfloat16, device_map="auto", attn_implementation="flash_attention_2",trust_remote_code=True)
+        self.processor = AutoProcessor.from_pretrained(model_path,trust_remote_code=True,use_fast=True)
         # self.processor.save_pretrained(model_path)
         self.temperature = args.temperature
         self.top_p = args.top_p
