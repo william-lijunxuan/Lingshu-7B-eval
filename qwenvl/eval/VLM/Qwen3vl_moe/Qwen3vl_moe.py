@@ -6,31 +6,56 @@ import time
 class Qwen3vl_moe:
     def __init__(self, model_path, args):
         super().__init__()
+
         bnb_config = BitsAndBytesConfig(
             load_in_4bit=True,
             bnb_4bit_compute_dtype=torch.bfloat16,
             bnb_4bit_quant_type="nf4",
             bnb_4bit_use_double_quant=True,
         )
-        self.llm =  Qwen3VLMoeForConditionalGeneration.from_pretrained(
+
+        max_memory = {
+            0: "19GiB",
+            1: "19GiB",
+            "cpu": "120GiB",
+        }
+
+        self.llm = Qwen3VLMoeForConditionalGeneration.from_pretrained(
             model_path,
-            quantization_config=bnb_config, device_map="auto",max_memory={0: "22GiB",1: "22GiB","cpu": "80GiB",},
+            quantization_config=bnb_config,
+            device_map="auto",
+            max_memory=max_memory,
+            offload_folder="./offload",
             low_cpu_mem_usage=True,
-            attn_implementation="flash_attention_2",trust_remote_code=True)
-        self.processor = AutoProcessor.from_pretrained(model_path,trust_remote_code=True,use_fast=True,fix_mistral_regex=True)
-        # self.processor.save_pretrained(model_path)
+            trust_remote_code=True,
+            # attn_implementation="flash_attention_2",
+        )
+
+        print("hf_device_map:", self.llm.hf_device_map)
+
+        self.processor = AutoProcessor.from_pretrained(
+            model_path,
+            trust_remote_code=True,
+            use_fast=False,
+            fix_mistral_regex=True,
+        )
+
         self.temperature = args.temperature
         self.top_p = args.top_p
         self.repetition_penalty = args.repetition_penalty
-        self.max_new_tokens = args.max_new_tokens
+        self.max_new_tokens = min(args.max_new_tokens, 16)
         self.adapter_path = getattr(args, "adapter_path", None)
         print(f"adapter_path:{self.adapter_path}")
-        if self.adapter_path is not None and not (isinstance(self.adapter_path, str) and self.adapter_path.strip().lower() in {"none", "null", ""}):
+
+        if self.adapter_path is not None and not (
+            isinstance(self.adapter_path, str) and self.adapter_path.strip().lower() in {"none", "null", ""}
+        ):
             from peft import PeftModel
             self.llm = PeftModel.from_pretrained(self.llm, self.adapter_path)
             self.llm = self.llm.merge_and_unload()
             print("----------------------Use fine-tuned weights---------------------------")
-            self.llm.eval()
+
+        self.llm.eval()
 
 
     def process_messages(self, messages):
