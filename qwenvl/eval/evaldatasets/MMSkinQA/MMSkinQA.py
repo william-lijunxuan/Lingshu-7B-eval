@@ -22,7 +22,7 @@ class MMSkinQA(BaseDataset):
         self.chunk_idx = int(os.environ.get("chunk_idx",0))
         self.num_chunks = int(os.environ.get("num_chunks",1))
         self.eval_local_datasets_flag = bool(strtobool(os.environ.get("eval_local_datasets_flag",True)))
-        self.eval_local_datasets_file = str(os.environ.get("eval_local_datasets_file", "/home/william/dataset/skin/MM-SkinQA/MM-SkinQA_20250711213519.json"))
+        self.eval_local_datasets_file = str(os.environ.get("eval_local_datasets_file", "/root/dataset/skin/MM-SkinQA/MM-SkinQA_20250711213519.json"))
 
 
     def load_data(self):
@@ -53,7 +53,7 @@ class MMSkinQA(BaseDataset):
         prompt_text = f"""
         \n{sample["question"]}\n
         """
-        img_path = os.path.join("/home/william/dataset/skin/MM-SkinQA", sample["image_name"])
+        img_path = os.path.join("/root/dataset/skin/MM-SkinQA", sample["image_name"])
         image_name = sample["image_name"]
         print(f"\nimage_name:{image_name}\n\n")
         print(f"\nprompt_text:{prompt_text}\n\n")

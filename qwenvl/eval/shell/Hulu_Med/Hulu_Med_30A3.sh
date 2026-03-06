@@ -24,10 +24,10 @@ EVAL_LOCAL_DATASETS_FLAG="True"
 EVAL_LOCAL_DATASETS_FILE="/root/dataset/skin/Derm1M/eval_Derm1M_train_json_1k.jsonl"
 
 # output config
-OUTPUT_PATH="eval_results/Hulu-Med-7B"
+OUTPUT_PATH="eval_results/Hulu-Med-30A3"
 
 # VLM model config
-MODEL_PATH="/root/model/Hulu-Med-7B"
+MODEL_PATH="/root/model/Hulu-Med-30A3"
 MODEL_NAME="Hulu_Med_7B"
 CONFIG_MODEL_NAME="Hulu_Med_7B"
 #ADAPTER_PATH="/root/model/Lingshu-7B-Finetuning/qwenvl/scripts/output"

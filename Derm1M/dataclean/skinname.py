@@ -5,7 +5,7 @@ from pathlib import Path
 from collections import defaultdict
 
 
-CSV_PATH = Path("/home/william/dataset/skin/Derm1M/Derm1M_v2_pretrain_HD.csv")
+CSV_PATH = Path("/root/dataset/skin/Derm1M/Derm1M_v2_pretrain_HD.csv")
 
 
 def norm_term(s: str) -> str:

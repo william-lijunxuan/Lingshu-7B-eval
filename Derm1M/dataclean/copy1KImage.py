@@ -4,7 +4,7 @@ from pathlib import Path
 
 
 JSONL_PATH = Path("/root/dataset/skin/Derm1M/eval_Derm1M_train_json_1k.jsonl")
-SRC_ROOT = JSONL_PATH.parent  # /home/william/dataset/skin/Derm1M
+SRC_ROOT = JSONL_PATH.parent  # /root/dataset/skin/Derm1M
 DST_DIR = SRC_ROOT / "clean"
 
 
