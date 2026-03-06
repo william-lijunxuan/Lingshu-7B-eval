@@ -45,3 +45,12 @@ git stash save"RL_eval"
 git pull
 bash shell/qwen3_5_4b/qwen3_5_4b.sh
 ```
+
+# Run Hulu_Med_30A3
+```bash
+cd /Lingshu-7B-eval
+git stash save"RL_eval"
+git pull
+cd /Lingshu-7B-eval/qwenvl/eval
+bash shell/Hulu_Med/Hulu_Med_30A3.sh
+```
