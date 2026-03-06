@@ -1,9 +1,9 @@
 from qwen_vl_utils import process_vision_info
-from transformers import  Qwen3VLMoeForConditionalGeneration, AutoTokenizer, AutoProcessor
+from transformers import  Qwen3VLMoeForConditionalGeneration, AutoProcessor
 import torch,gc
 import time
 
-class Qwen3_vl_moe:
+class Qwen3vl_moe:
     def __init__(self, model_path, args):
         super().__init__()
         self.llm =  Qwen3VLMoeForConditionalGeneration.from_pretrained(
