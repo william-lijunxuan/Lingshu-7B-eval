@@ -59,6 +59,7 @@ class Hulu_Med_7B:
 def init_llm(args):
     try:
         print("--------args.model_name:",args.model_name)
+        print("--------registered models:", VLMRegistry.list_models())
         model_class = VLMRegistry.get_model(args.model_name)
         return model_class(args.model_path, args)
     except ValueError as e:
