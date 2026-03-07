@@ -1,120 +1,141 @@
-from transformers import AutoModel, AutoTokenizer
+import time
 import torch
 
-from tqdm import tqdm
-import time
-
 from PIL import Image
+from transformers import AutoModel, AutoTokenizer
+
+from .utils import load_image
 
 
 class InternVL3:
     def __init__(self, model_path, args):
         super().__init__()
+
         self.llm = AutoModel.from_pretrained(
             model_path,
             torch_dtype=torch.bfloat16,
             low_cpu_mem_usage=True,
             trust_remote_code=True,
             device_map="auto",
-            attn_implementation="flash_attention_2"
+            attn_implementation="flash_attention_2",
         )
-        self.processor = AutoTokenizer.from_pretrained(model_path, use_fast=True,trust_remote_code=True)
 
-        self.temperature = args.temperature
-        self.top_p = args.top_p
-        self.repetition_penalty = args.repetition_penalty
-        self.max_new_tokens = args.max_new_tokens
+        self.tokenizer = AutoTokenizer.from_pretrained(
+            model_path,
+            trust_remote_code=True,
+            use_fast=False,
+        )
+
+        self.generation_config = {
+            "max_new_tokens": args.max_new_tokens,
+            "repetition_penalty": args.repetition_penalty,
+            "temperature": args.temperature,
+            "top_p": args.top_p,
+        }
+
         self.adapter_path = getattr(args, "adapter_path", None)
         print(f"adapter_path:{self.adapter_path}")
+
         if self.adapter_path is not None and not (
-                isinstance(self.adapter_path, str) and self.adapter_path.strip().lower() in {"none", "null", ""}):
+            isinstance(self.adapter_path, str) and self.adapter_path.strip().lower() in {"none", "null", ""}
+        ):
             from peft import PeftModel
+
             self.llm = PeftModel.from_pretrained(self.llm, self.adapter_path)
             print("----------------------Use GRPO weights---------------------------")
             self.llm = self.llm.merge_and_unload()
             self.llm.eval()
-            print(type(self.llm))
-            print(self.llm.peft_config.keys())
+
+    def _get_vision_device(self):
+        if torch.cuda.is_available():
+            return torch.device("cuda:0")
+        return torch.device("cpu")
 
     def process_messages(self, messages):
-        current_messages = []
-        imgs = []
+        prompt = ""
+        pixel_values = None
+
         if "messages" in messages:
-            messages = messages["messages"]
-            for message in messages:
+            for message in messages["messages"]:
                 role = message["role"]
                 content = message["content"]
-                current_messages.append({"role": role, "content": [{"type": "text", "text": content}]})
+                prompt += f"{role}: {content}\n"
+
+            return {
+                "prompt": prompt.strip(),
+                "pixel_values": None,
+            }
+
+        if "system" in messages:
+            prompt += messages["system"] + "\n"
+
+        text = messages["prompt"]
+
+        if "image" in messages:
+            prompt += "<image>\n" + text
+            image = messages["image"]
+            pixel_values = load_image(image).to(torch.bfloat16).to(self._get_vision_device())
+
+        elif "images" in messages:
+            images = messages["images"]
+            for i, _ in enumerate(images):
+                prompt += f"<image_{i + 1}>: <image>\n"
+            prompt += text
+
+            image_tensors = []
+            for image in images:
+                image_tensors.append(
+                    load_image(image).to(torch.bfloat16).to(self._get_vision_device())
+                )
+            pixel_values = torch.cat(image_tensors, dim=0)
 
         else:
-            prompt = messages["prompt"]
-            if "system" in messages:
-                system_prompt = messages["system"]
-                current_messages.append({"role": "system", "content": [{"type": "text", "text": system_prompt}]})
-            if "image" in messages:
-                image = messages["image"]
-                if isinstance(image, str):
-                    image = Image.open(image)
-                imgs.append(image)
-                current_messages.append(
-                    {"role": "user", "content": [{"type": "image", "image": image}, {"type": "text", "text": prompt}]})
-            elif "images" in messages:
-                content = []
-                for i, image in enumerate(messages["images"]):
-                    content.append({"type": "text", "text": f"<image_{i + 1}>: "})
-                    content.append({"type": "image", "image": image})
-                    if isinstance(image, str):
-                        image = Image.open(image)
-                    imgs.append(image)
-                content.append({"type": "text", "text": messages["prompt"]})
-                current_messages.append({"role": "user", "content": content})
-            else:
-                current_messages.append({"role": "user", "content": [{"type": "text", "text": prompt}]})
+            prompt += text
+            pixel_values = None
 
-        print(f"\ninput prompt:{current_messages}\n")
-        inputs = self.processor.apply_chat_template(
-            current_messages,
-            add_generation_prompt=True,
-            tokenize=True,
-            return_dict=True,
-            return_tensors="pt"
-        )
-
-        inputs = {k: v.to(self.llm.device) if torch.is_tensor(v) else v for k, v in inputs.items()}
-        if "pixel_values" in inputs and inputs["pixel_values"] is not None:
-            inputs["pixel_values"] = inputs["pixel_values"].to(dtype=torch.bfloat16)
-
-        return inputs
+        return {
+            "prompt": prompt,
+            "pixel_values": pixel_values,
+        }
 
     def generate_output(self, messages):
         llm_inputs = self.process_messages(messages)
-        input_len = llm_inputs["input_ids"].shape[-1]
-        with torch.inference_mode():
-            do_sample = False if self.temperature == 0 else True
-            generation = self.llm.chat(
-                **llm_inputs,
-                max_new_tokens=self.max_new_tokens,
-                do_sample=do_sample,
-                temperature=None if not do_sample else self.temperature,
-                top_p=None if not do_sample else self.top_p,
-                repetition_penalty=self.repetition_penalty,
-                pad_token_id=self.processor.tokenizer.eos_token_id,
-                eos_token_id=self.processor.tokenizer.eos_token_id,
-                use_cache=True,
-            )
-            generation = generation[0][input_len:]
-        decoded = self.processor.decode(generation, skip_special_tokens=True)
-        return decoded
+        question = llm_inputs["prompt"]
+        pixel_values = llm_inputs["pixel_values"]
+
+        do_sample = self.generation_config["temperature"] != 0
+        gen_config = {
+            "max_new_tokens": self.generation_config["max_new_tokens"],
+            "repetition_penalty": self.generation_config["repetition_penalty"],
+            "do_sample": do_sample,
+        }
+
+        if do_sample:
+            gen_config["temperature"] = self.generation_config["temperature"]
+            gen_config["top_p"] = self.generation_config["top_p"]
+
+        response, history = self.llm.chat(
+            self.tokenizer,
+            pixel_values,
+            question,
+            gen_config,
+            history=None,
+            return_history=True,
+        )
+        return response
 
     def generate_outputs(self, messages_list):
         res = []
         sub_total_time = []
+
         for idx, messages in enumerate(messages_list, start=1):
-            start_times = time.perf_counter()
+            start_time = time.perf_counter()
             result = self.generate_output(messages)
-            end_times = time.perf_counter()
-            delta = end_times - start_times
+            end_time = time.perf_counter()
+            delta = end_time - start_time
+
             print(f"idx:{idx},result-------------:{result},total_time:{delta}")
             res.append(result)
             sub_total_time.append(delta)
+
         return res, sub_total_time
