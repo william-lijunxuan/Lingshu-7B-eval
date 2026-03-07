@@ -7,7 +7,7 @@ import time
 from PIL import Image
 
 
-class InterVL3:
+class InternVL3:
     def __init__(self, model_path, args):
         super().__init__()
         self.llm = AutoModel.from_pretrained(
