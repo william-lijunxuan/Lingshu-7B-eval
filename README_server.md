@@ -61,7 +61,7 @@ cd Lingshu-7B-eval
 git stash save"RL_eval"
 git pull
 cd Lingshu-7B-eval/qwenvl/eval
-bash shell/MediX_R1/MediX_R1_8b.sh
+bash shell/MediX_R1/mediX_R1_8b.sh
 ```
 
 # Run lingshu-I-8B(InternVL3)
