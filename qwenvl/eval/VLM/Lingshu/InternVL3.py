@@ -13,9 +13,13 @@ class InternVL3:
         self.llm = AutoModel.from_pretrained(
             model_path,
             torch_dtype=torch.bfloat16,
-            device_map="auto", attn_implementation="flash_attention_2"
+            low_cpu_mem_usage=True,
+            use_flash_attn=True,
+            trust_remote_code=True,
+            device_map="auto",
+            # attn_implementation="flash_attention_2"
         )
-        self.processor = AutoTokenizer.from_pretrained(model_path, use_fast=True)
+        self.processor = AutoTokenizer.from_pretrained(model_path, use_fast=True,trust_remote_code=True)
 
         self.temperature = args.temperature
         self.top_p = args.top_p
