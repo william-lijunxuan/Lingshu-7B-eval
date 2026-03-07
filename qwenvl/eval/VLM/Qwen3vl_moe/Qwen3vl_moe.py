@@ -8,7 +8,7 @@ class Qwen3vl_moe:
         super().__init__()
         self.llm =  Qwen3VLMoeForConditionalGeneration.from_pretrained(
             model_path,torch_dtype=torch.bfloat16, device_map="auto", attn_implementation="flash_attention_2",trust_remote_code=True)
-        self.processor = AutoProcessor.from_pretrained(model_path,trust_remote_code=True,use_fast=True)
+        self.processor = AutoProcessor.from_pretrained(model_path,trust_remote_code=True,fix_mistral_regex=True,use_fast=True)
         # self.processor.save_pretrained(model_path)
         self.temperature = args.temperature
         self.top_p = args.top_p
@@ -22,7 +22,6 @@ class Qwen3vl_moe:
             self.llm = self.llm.merge_and_unload()
             print("----------------------Use fine-tuned weights---------------------------")
             self.llm.eval()
-
 
     def process_messages(self, messages):
         new_messages = []
@@ -69,7 +68,7 @@ class Qwen3vl_moe:
         #         print("----------------------Use fine-tuned weights---------------------------")
         #         # merged_model = model.merge_and_unload()
         #         self.llm.eval()
-        generated_ids = self.llm.generate(**inputs,temperature=self.temperature,top_p=self.top_p,repetition_penalty=self.repetition_penalty,max_new_tokens=self.max_new_tokens,do_sample = do_sample,use_cache=True)
+        generated_ids = self.llm.generate(**inputs,temperature=self.temperature,top_p=self.top_p,repetition_penalty=self.repetition_penalty,max_new_tokens=self.max_new_tokens,do_sample = do_sample,use_cache=False)
         generated_ids_trimmed = [
             out_ids[len(in_ids) :] for in_ids, out_ids in zip(inputs.input_ids, generated_ids)
         ]
