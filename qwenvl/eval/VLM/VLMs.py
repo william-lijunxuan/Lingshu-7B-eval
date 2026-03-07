@@ -60,6 +60,13 @@ class Hulu_Med_7B:
         from .Hulu_Med_7B.Hulu_Med_7B import Hulu_Med_7B
         return Hulu_Med_7B(model_path, args)
 
+@VLMRegistry.register("InternVL3")
+class InternVL:
+    def __new__(cls, model_path: str, args: Any) -> Any:
+        from .Lingshu.InternVL3 import InternVL3
+        return InternVL3(model_path, args)
+
+
 def init_llm(args):
     try:
         print("--------args.model_name:",args.model_name)
