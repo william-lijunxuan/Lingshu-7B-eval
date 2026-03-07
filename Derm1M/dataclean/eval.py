@@ -529,8 +529,41 @@ import os
 # Assume _norm, _alias_map, _ALIAS2CANON, _canonical, judge_close_end_vqa_json
 # are already defined exactly as you provided (do not modify them).
 
-RESULTS_PATH = r"\home\william\dataset\skin\Derm1M\1k\results_Hulu_4B.json"
+# Hulu-4B_baseline
+# RESULTS_PATH = r"\home\william\model\Lingshu-7B-eval\qwenvl\eval\eval_results\Hulu-Med-4B\20260217_152913\Derm1m0Baseline\results_Hulu_4B.json"
 
+# MedGemma1.5-4B_max_step_3400
+# RESULTS_PATH = r"\home\william\model\Lingshu-7B-eval\qwenvl\eval\eval_results\Medgemma_1.5-4B\20260217_152801\Derm1m0Baseline\results.json"
+
+#MedGemma1.5-4B_max_steps_6800
+# RESULTS_PATH = r"\home\william\model\Lingshu-7B-eval\qwenvl\eval\eval_results\Medgemma_1.5-4B\20260226_133832\Derm1m0Baseline\results_6800.json"
+
+#MedGemma1.5-4B_small_LearnRate_max_steps_1700+3400
+# RESULTS_PATH = r"\home\william\model\Lingshu-7B-eval\qwenvl\eval\eval_results\Medgemma_1.5-4B\20260302_150538\Derm1m0Baseline\results.json"
+
+#MedGemma1.5-4B_small_LearnRate_max_steps_1700+3400+1700
+# RESULTS_PATH = r"\home\william\model\Lingshu-7B-eval\qwenvl\eval\eval_results\Medgemma_1.5-4B\20260304_111839\Derm1m0Baseline\results.json"
+
+# MedGemma1.5-4B_max_step_1700
+# RESULTS_PATH = r"\home\william\model\Lingshu-7B-eval\qwenvl\eval\eval_results\Medgemma_1.5-4B\20260218_103243\Derm1m0Baseline\results_MedGemma_1700.json"
+
+# MedGemma1.5-4B_small_LearnRate_max_steps_1700
+# RESULTS_PATH = r"\home\william\model\Lingshu-7B-eval\qwenvl\eval\eval_results\Medgemma_1.5-4B\20260228_134851\Derm1m0Baseline\results.json"
+
+# Qwen3vl_max_steps_3400
+# RESULTS_PATH = r"\home\william\model\Lingshu-7B-eval\qwenvl\eval\eval_results\Qwen3-VL-4B-Instruct\20260224_164528\Derm1m0Baseline\results.json"
+
+# MedGemma1.5-4B_baseline
+# RESULTS_PATH = r"\home\william\model\Lingshu-7B-eval\qwenvl\eval\eval_results\Medgemma_1.5-4B\20260218_091414\Derm1m0Baseline\results_MedGemma_Baseline.json"
+
+# Qwen3vl_eporch_3
+# RESULTS_PATH = r"\home\william\model\Lingshu-7B-eval\qwenvl\eval\eval_results\Qwen3-VL-4B-Instruct\20260223_210154\Derm1m0Baseline\results.json"
+
+# Qwen3.5_baseline
+# RESULTS_PATH = r"\home\william\model\Lingshu-7B-eval\qwenvl\eval\eval_results\Qwen3_5-4B\20260304_232006\Derm1m0Baseline\results.json"
+
+# Qwen3vl_baseline
+# RESULTS_PATH = r"\home\william\model\Lingshu-7B-eval\qwenvl\eval\eval_results\Qwen3-VL-4B-Instruct\20260219_132946\Derm1m0Baseline\results.json"
 
 def _to_posix_path(p: str) -> str:
     p = p.strip()
