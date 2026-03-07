@@ -14,10 +14,9 @@ class InternVL3:
             model_path,
             torch_dtype=torch.bfloat16,
             low_cpu_mem_usage=True,
-            use_flash_attn=True,
             trust_remote_code=True,
             device_map="auto",
-            # attn_implementation="flash_attention_2"
+            attn_implementation="flash_attention_2"
         )
         self.processor = AutoTokenizer.from_pretrained(model_path, use_fast=True,trust_remote_code=True)
 
