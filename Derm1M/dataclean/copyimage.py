@@ -3,9 +3,9 @@ import shutil
 from pathlib import Path
 
 
-# JSONL_PATH = Path("/mnt/d/skinalor/dataset/skin/Derm1M/eval_Derm1M_train_json_1k_clean.jsonl")
-JSONL_PATH = Path("/mnt/d/skinalor/dataset/skin/Derm1M/eval_Derm1M_train_json_1k_clean.jsonl")
-SRC_ROOT = JSONL_PATH.parent  # /mnt/d/skinalor/dataset/skin/Derm1M
+# JSONL_PATH = Path("/root/dataset/skin/Derm1M/eval_Derm1M_train_json_1k_clean.jsonl")
+JSONL_PATH = Path("/root/dataset/skin/Derm1M/eval_Derm1M_train_json_1k_clean.jsonl")
+SRC_ROOT = JSONL_PATH.parent  # /root/dataset/skin/Derm1M
 DST_DIR = SRC_ROOT / "clean"
 
 

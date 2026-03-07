@@ -2,8 +2,8 @@ import json
 from pathlib import Path
 
 
-SRC_JSONL = Path("/mnt/d/skinalor/dataset/skin/Derm1M/eval_Derm1M_train_json_1k.jsonl")
-DST_JSONL = Path("/mnt/d/skinalor/dataset/skin/Derm1M/eval_Derm1M_train_json_1k_clean.jsonl")
+SRC_JSONL = Path("/root/dataset/skin/Derm1M/eval_Derm1M_train_json_1k.jsonl")
+DST_JSONL = Path("/root/dataset/skin/Derm1M/eval_Derm1M_train_json_1k_clean.jsonl")
 
 EXCLUDE_NAMES = {
     "edu__Leslie Baumann - Cosmetic Dermatology- Principles and Practice, Second Edition-McGraw-Hill Professional (2009)_00362_01634.png",

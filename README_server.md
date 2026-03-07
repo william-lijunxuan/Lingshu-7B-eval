@@ -3,7 +3,7 @@ Evaluate the model
 
 # download code
 ```bash
-cd /mnt/d/skinalor/model
+cd /root/model
 git clone https://github.com/william-lijunxuan/Lingshu-7B-eval.git
 git checkout server
 git pull  

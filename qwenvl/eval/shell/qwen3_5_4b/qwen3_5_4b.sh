@@ -20,20 +20,20 @@ EMBEDDING_MODEL_NAME="openai/clip-vit-base-patch32"
 DATASETS_PATH="redlessone"
 EVAL_DATASETS="Derm1m"
 EVAL_LOCAL_DATASETS_FLAG="True"
-#EVAL_LOCAL_DATASETS_FILE="/mnt/d/skinalor/dataset/skin/Derm1M/Derm1M_train_qwen_prompt.jsonl"
-EVAL_LOCAL_DATASETS_FILE="/mnt/d/skinalor/dataset/skin/Derm1M/eval_Derm1M_train_json_1k.jsonl"
+#EVAL_LOCAL_DATASETS_FILE="/root/dataset/skin/Derm1M/Derm1M_train_qwen_prompt.jsonl"
+EVAL_LOCAL_DATASETS_FILE="/root/dataset/skin/Derm1M/eval_Derm1M_train_json_1k.jsonl"
 
 # output config
 OUTPUT_PATH="eval_results/Qwen3_5-4B"
 
 # VLM model config
-MODEL_PATH="/mnt/d/skinalor/model/Qwen3.5-4B"
+MODEL_PATH="/root/model/Qwen3.5-4B"
 MODEL_NAME="Qwen3_5" #
 CONFIG_MODEL_NAME="Qwen3_5_4b"
-#ADAPTER_PATH="/mnt/d/skinalor/model/Lingshu-7B-Finetuning/qwenvl/scripts/output"
-#ADAPTER_PATH="/mnt/d/skinalor/model/Lingshu-7B-eval/qwenvl/eval/output"
+#ADAPTER_PATH="/root/model/Lingshu-7B-Finetuning/qwenvl/scripts/output"
+#ADAPTER_PATH="/root/model/Lingshu-7B-eval/qwenvl/eval/output"
 ADAPTER_PATH=None
-#ADAPTER_PATH="/mnt/d/skinalor/model/Qwen3.5-4B-Instruct-trl-grpo"
+#ADAPTER_PATH="/root/model/Qwen3.5-4B-Instruct-trl-grpo"
 
 # vllm settings
 CUDA_VISIBLE_DEVICES="0,1"

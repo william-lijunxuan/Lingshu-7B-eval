@@ -5,9 +5,9 @@ import requests
 from io import BytesIO
 
 # ============ 配置 ============
-model_path = "/mnt/d/skinalor/model/Qwen3.5-4B"  # 您的本地模型路径
+model_path = "/root/model/Qwen3.5-4B"  # 您的本地模型路径
 device = "cuda" if torch.cuda.is_available() else "cpu"
-image_path = "/mnt/d/skinalor/dataset/skin/Derm1M/clean/edu/978-3-642-97931-6_00100_01864.png"
+image_path = "/root/dataset/skin/Derm1M/clean/edu/978-3-642-97931-6_00100_01864.png"
 
 # ============ 加载模型和处理器 ============
 print(f"Loading model from {model_path}...")
