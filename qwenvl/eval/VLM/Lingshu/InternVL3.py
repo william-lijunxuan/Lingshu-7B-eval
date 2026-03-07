@@ -91,7 +91,7 @@ class InternVL3:
         input_len = llm_inputs["input_ids"].shape[-1]
         with torch.inference_mode():
             do_sample = False if self.temperature == 0 else True
-            generation = self.llm.generate(
+            generation = self.llm.chat(
                 **llm_inputs,
                 max_new_tokens=self.max_new_tokens,
                 do_sample=do_sample,
