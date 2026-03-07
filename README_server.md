@@ -48,7 +48,7 @@ bash shell/qwen3_5_4b/qwen3_5_4b.sh
 
 # Run Hulu_Med_30A3
 ```bash
-cd /Lingshu-7B-eval
+cd Lingshu-7B-eval
 git stash save"RL_eval"
 git pull
 cd Lingshu-7B-eval/qwenvl/eval
@@ -57,7 +57,7 @@ bash shell/Hulu_Med/Hulu_Med_30A3.sh
 
 # Run MediX_R1
 ```bash
-cd /Lingshu-7B-eval
+cd Lingshu-7B-eval
 git stash save"RL_eval"
 git pull
 cd Lingshu-7B-eval/qwenvl/eval
@@ -66,9 +66,9 @@ bash shell/MediX_R1/MediX_R1_8b.sh
 
 # Run lingshu-I-8B(InternVL3)
 ```bash
-cd /Lingshu-7B-eval
+cd Lingshu-7B-eval
 git stash save"RL_eval"
 git pull
-cd Lingshu-7B-eval/qwenvl/eval
+cd qwenvl/eval
 bash shell/Lingshu/lingshu-I-8B.sh
 ```

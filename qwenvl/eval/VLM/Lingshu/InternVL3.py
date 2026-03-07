@@ -1,128 +1,117 @@
-import os
+from transformers import AutoModel, AutoTokenizer
+import torch
+
+from tqdm import tqdm
 import time
-from typing import Any, Dict, List
 
 from PIL import Image
-from vllm import LLM, SamplingParams
 
 
-os.environ.setdefault("VLLM_WORKER_MULTIPROC_METHOD", "spawn")
-os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
-
-
-class InternVL3:
+class InterVL3:
     def __init__(self, model_path, args):
         super().__init__()
+        self.llm = AutoModel.from_pretrained(
+            model_path,
+            torch_dtype=torch.bfloat16,
+            device_map="auto", attn_implementation="flash_attention_2"
+        )
+        self.processor = AutoTokenizer.from_pretrained(model_path, use_fast=True)
 
-        self.model_path = model_path
         self.temperature = args.temperature
         self.top_p = args.top_p
         self.repetition_penalty = args.repetition_penalty
         self.max_new_tokens = args.max_new_tokens
-        self.max_image_num = getattr(args, "max_image_num", 1)
-        self.tensor_parallel_size = int(getattr(args, "tensor_parallel_size", 1))
         self.adapter_path = getattr(args, "adapter_path", None)
-
-        gpu_memory_utilization = float(getattr(args, "gpu_memory_utilization", 0.85))
-
-        self.llm = LLM(
-            model=model_path,
-            tokenizer=model_path,
-            trust_remote_code=True,
-            tensor_parallel_size=self.tensor_parallel_size,
-            enforce_eager=True,
-            gpu_memory_utilization=gpu_memory_utilization,
-            limit_mm_per_prompt={"image": max(1, self.max_image_num)},
-        )
-
         print(f"adapter_path:{self.adapter_path}")
+        if self.adapter_path is not None and not (
+                isinstance(self.adapter_path, str) and self.adapter_path.strip().lower() in {"none", "null", ""}):
+            from peft import PeftModel
+            self.llm = PeftModel.from_pretrained(self.llm, self.adapter_path)
+            print("----------------------Use GRPO weights---------------------------")
+            self.llm = self.llm.merge_and_unload()
+            self.llm.eval()
+            print(type(self.llm))
+            print(self.llm.peft_config.keys())
 
-    def _load_image(self, image: Any):
-        if isinstance(image, Image.Image):
-            return image.convert("RGB")
-        if isinstance(image, str):
-            return Image.open(image).convert("RGB")
-        return image
+    def process_messages(self, messages):
+        current_messages = []
+        imgs = []
+        if "messages" in messages:
+            messages = messages["messages"]
+            for message in messages:
+                role = message["role"]
+                content = message["content"]
+                current_messages.append({"role": role, "content": [{"type": "text", "text": content}]})
 
-    def _build_prompt_and_mm_data(self, messages: Dict[str, Any]) -> Dict[str, Any]:
-        system_message = messages.get("system", "")
-        prompt_text = messages.get("prompt", "")
+        else:
+            prompt = messages["prompt"]
+            if "system" in messages:
+                system_prompt = messages["system"]
+                current_messages.append({"role": "system", "content": [{"type": "text", "text": system_prompt}]})
+            if "image" in messages:
+                image = messages["image"]
+                if isinstance(image, str):
+                    image = Image.open(image)
+                imgs.append(image)
+                current_messages.append(
+                    {"role": "user", "content": [{"type": "image", "image": image}, {"type": "text", "text": prompt}]})
+            elif "images" in messages:
+                content = []
+                for i, image in enumerate(messages["images"]):
+                    content.append({"type": "text", "text": f"<image_{i + 1}>: "})
+                    content.append({"type": "image", "image": image})
+                    if isinstance(image, str):
+                        image = Image.open(image)
+                    imgs.append(image)
+                content.append({"type": "text", "text": messages["prompt"]})
+                current_messages.append({"role": "user", "content": content})
+            else:
+                current_messages.append({"role": "user", "content": [{"type": "text", "text": prompt}]})
 
-        images: List[Any] = []
-        user_parts: List[str] = []
-
-        if "image" in messages:
-            images.append(self._load_image(messages["image"]))
-            user_parts.append("<IMG_CONTEXT>")
-
-        elif "images" in messages:
-            for image in messages["images"]:
-                images.append(self._load_image(image))
-                user_parts.append("<IMG_CONTEXT>")
-
-        user_parts.append(prompt_text)
-        user_content = "\n".join([x for x in user_parts if x is not None and x != ""])
-
-        parts: List[str] = []
-        if system_message:
-            parts.append(f"<|im_start|>system\n{system_message}<|im_end|>\n")
-        parts.append(f"<|im_start|>user\n{user_content}<|im_end|>\n")
-        parts.append("<|im_start|>assistant\n")
-        prompt = "".join(parts)
-
-        llm_inputs = {
-            "prompt": prompt,
-            "multi_modal_data": {},
-        }
-
-        if images:
-            llm_inputs["multi_modal_data"]["image"] = images
-
-        return llm_inputs
-
-    def _build_sampling_params(self) -> SamplingParams:
-        if self.temperature == 0:
-            return SamplingParams(
-                temperature=0.0,
-                top_p=1.0,
-                repetition_penalty=self.repetition_penalty,
-                max_tokens=self.max_new_tokens,
-            )
-
-        return SamplingParams(
-            temperature=self.temperature,
-            top_p=self.top_p,
-            repetition_penalty=self.repetition_penalty,
-            max_tokens=self.max_new_tokens,
+        print(f"\ninput prompt:{current_messages}\n")
+        inputs = self.processor.apply_chat_template(
+            current_messages,
+            add_generation_prompt=True,
+            tokenize=True,
+            return_dict=True,
+            return_tensors="pt"
         )
 
-    def generate_output(self, messages: Dict[str, Any]) -> str:
-        llm_inputs = self._build_prompt_and_mm_data(messages)
-        sampling_params = self._build_sampling_params()
-        outputs = self.llm.generate([llm_inputs], sampling_params=sampling_params)
-        return outputs[0].outputs[0].text
+        inputs = {k: v.to(self.llm.device) if torch.is_tensor(v) else v for k, v in inputs.items()}
+        if "pixel_values" in inputs and inputs["pixel_values"] is not None:
+            inputs["pixel_values"] = inputs["pixel_values"].to(dtype=torch.bfloat16)
 
-    def generate_outputs(self, messages_list: List[Dict[str, Any]]):
-        llm_inputs_list = []
-        for messages in messages_list:
-            llm_inputs_list.append(self._build_prompt_and_mm_data(messages))
+        return inputs
 
-        sampling_params = self._build_sampling_params()
+    def generate_output(self, messages):
+        llm_inputs = self.process_messages(messages)
+        input_len = llm_inputs["input_ids"].shape[-1]
+        with torch.inference_mode():
+            do_sample = False if self.temperature == 0 else True
+            generation = self.llm.generate(
+                **llm_inputs,
+                max_new_tokens=self.max_new_tokens,
+                do_sample=do_sample,
+                temperature=None if not do_sample else self.temperature,
+                top_p=None if not do_sample else self.top_p,
+                repetition_penalty=self.repetition_penalty,
+                pad_token_id=self.processor.tokenizer.eos_token_id,
+                eos_token_id=self.processor.tokenizer.eos_token_id,
+                use_cache=True,
+            )
+            generation = generation[0][input_len:]
+        decoded = self.processor.decode(generation, skip_special_tokens=True)
+        return decoded
 
-        start_time = time.perf_counter()
-        outputs = self.llm.generate(llm_inputs_list, sampling_params=sampling_params)
-        end_time = time.perf_counter()
-
-        total_time = end_time - start_time
-        avg_time = total_time / max(1, len(outputs))
-
+    def generate_outputs(self, messages_list):
         res = []
         sub_total_time = []
-
-        for idx, output in enumerate(outputs, start=1):
-            text = output.outputs[0].text
-            print(f"idx:{idx},result-------------:{text}")
-            res.append(text)
-            sub_total_time.append(avg_time)
-
+        for idx, messages in enumerate(messages_list, start=1):
+            start_times = time.perf_counter()
+            result = self.generate_output(messages)
+            end_times = time.perf_counter()
+            delta = end_times - start_times
+            print(f"idx:{idx},result-------------:{result},total_time:{delta}")
+            res.append(result)
+            sub_total_time.append(delta)
         return res, sub_total_time
