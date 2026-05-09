@@ -1,10 +1,10 @@
 from transformers import AutoProcessor, AutoModelForCausalLM
 import torch
 
-MODEL_ID = "/home/william/model/gemma-4-E4B-it"
+MODEL_ID = "/root/model/gemma-4-E4B-it"
 
-# IMAGE = "/home/william/dataset/skin/Derm1M/IIYI/7_3.png"
-IMAGE = "/home/william/model/X-AnyLabeling/DeweiMap4.tif"
+# IMAGE = "/root/dataset/skin/Derm1M/IIYI/7_3.png"
+IMAGE = "/root/model/X-AnyLabeling/DeweiMap4.tif"
 prompt = (
     "请描述下图片的内容，使用中文回答，图中像管道一样的细管，是石油管道，统计图中有几处石油管道？有很多石油管道被植被给覆盖住了，注意有的是石油管道的影子，影子不能统计，这种的按照一条石油管道进行统计"
 )

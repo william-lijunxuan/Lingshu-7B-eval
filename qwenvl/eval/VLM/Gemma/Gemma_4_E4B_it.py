@@ -1,9 +1,9 @@
 from transformers import AutoProcessor, AutoModelForCausalLM
 import torch
 
-MODEL_ID = "/home/william/model/gemma-4-E4B-it"
+MODEL_ID = "/root/model/gemma-4-E4B-it"
 
-IMAGE = "/home/william/dataset/skin/Derm1M/IIYI/7_3.png"
+IMAGE = "/root/dataset/skin/Derm1M/IIYI/7_3.png"
 prompt = (
     "You are a board‐certified dermatology AI specialist. A patient has just uploaded an image of a skin lesion. "
     "Carefully examine the lesion’s visual features—color, shape, borders, surface texture, and anatomic location—and "
